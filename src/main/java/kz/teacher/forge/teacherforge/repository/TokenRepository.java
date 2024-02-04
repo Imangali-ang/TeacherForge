@@ -1,0 +1,11 @@
+package kz.teacher.forge.teacherforge.repository;
+
+import java.util.Optional;
+
+import kz.teacher.forge.teacherforge.models.token.Token;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface TokenRepository extends JpaRepository<Token, Integer> {
+
+    Optional<Token> findByToken(String token);
+}
