@@ -15,17 +15,21 @@ public class JwtUtils {
     @Value("${jwt.expiration}")
     private int jwtExpiration;
 
-    public String generateToken(String userId) {
+    public String generateToken(String userEmail) {
         return Jwts.builder()
-                .setSubject(userId)
+                .setSubject(userEmail)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpiration * 1000))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .signWith(SignatureAlgorithm.HS256, jwtSecret)
                 .compact();
     }
 
     public String getUsernameFromToken(String token) {
-        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
     public boolean validateToken(String token) {

@@ -6,6 +6,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -15,6 +16,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -23,8 +26,8 @@ import lombok.NoArgsConstructor;
 public class Token {
 
     @Id
-    @GeneratedValue
-    public Integer id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    public UUID id;
 
     @Column(unique = true)
     public String token;

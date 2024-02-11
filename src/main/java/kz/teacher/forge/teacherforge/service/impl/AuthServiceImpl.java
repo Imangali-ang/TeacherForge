@@ -15,7 +15,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 
 @Service
@@ -29,6 +31,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void sendVerificationCode(Email email) {
+        Optional<EmailCode> existCode = emailCodeRepository.findEmailCodeByEmail(email.getEmail());
+        if(existCode.isPresent() && Duration.between(existCode.get().getSendingTime(), LocalDateTime.now()).toMinutes() < 1) {
+            throw new ApiException(ApiError.TOKEN_EXPIRED , "Email code expired");
+        }
         String verificationCode = generateRandomCode();
         EmailCode emailCode = new EmailCode();
         sendEmail(email.getEmail(), "Код подтверждения", "Ваш код подтверждения: " + verificationCode);
