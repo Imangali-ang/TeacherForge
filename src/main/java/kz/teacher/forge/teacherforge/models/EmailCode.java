@@ -29,5 +29,11 @@ public class EmailCode {
 
     private boolean used;
 
+    public void setEmail(String email) {
+        this.email = email.toLowerCase();
+    }
+    public String getEmail() {
+        return email.toLowerCase();
+    }
 
 }

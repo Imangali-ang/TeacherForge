@@ -32,7 +32,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void sendVerificationCode(Email email) {
         Optional<EmailCode> existCode = emailCodeRepository.findEmailCodeByEmail(email.getEmail());
-        if(existCode.isPresent() && Duration.between(existCode.get().getSendingTime(), LocalDateTime.now()).toMinutes() < 1) {
+        if(existCode.isPresent() &&
+                Duration.between(existCode.get().getSendingTime(), LocalDateTime.now()).toMinutes() < 1) {
             throw new ApiException(ApiError.TOKEN_EXPIRED , "Email code expired");
         }
         String verificationCode = generateRandomCode();
