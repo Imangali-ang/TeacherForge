@@ -34,11 +34,15 @@ public class AuthServiceImpl implements AuthService {
         Optional<EmailCode> existCode = emailCodeRepository.findEmailCodeByEmail(email.getEmail());
         if(existCode.isPresent() &&
                 Duration.between(existCode.get().getSendingTime(), LocalDateTime.now()).toMinutes() < 1) {
-            throw new ApiException(ApiError.TOKEN_EXPIRED , "Email code expired");
+            throw new ApiException(ApiError.TOKEN_EXPIRED , "Can't send another one code to email, pls wat 1 minute");
         }
         String verificationCode = generateRandomCode();
         EmailCode emailCode = new EmailCode();
-        sendEmail(email.getEmail(), "Код подтверждения", "Ваш код подтверждения: " + verificationCode);
+        try {
+            sendEmail(email.getEmail(), "Код подтверждения", "Ваш код подтверждения: " + verificationCode);
+        } catch (Throwable ex){
+            throw new ApiException(ApiError.BAD_REQUEST , "Can't send code to email");
+        }
         emailCode.setCode(verificationCode);
         emailCode.setSendingTime(LocalDateTime.now());
         emailCode.setEmail(email.getEmail());
@@ -51,11 +55,13 @@ public class AuthServiceImpl implements AuthService {
         EmailCode emailCode = emailCodeRepository.findEmailCodeByEmail(receiveOpt.getEmail())
                 .orElseThrow(()-> new ApiException(ApiError.FORBIDDEN , "can't find email code"));
         if(!emailCode.getCode().equals(receiveOpt.getCode())){
-            return null;
+            throw new ApiException(ApiError.AUTHORIZATION_ERROR , "Email code not match");
         }
-        User user = userRepository.findByEmail(emailCode.getEmail())
-                .orElseThrow(()-> new ApiException(ApiError.RESOURCE_NOT_FOUND , "can't find user by email"));
-        return user;
+        if(Duration.between(emailCode.getSendingTime(), LocalDateTime.now()).toMinutes() > 5) {
+            throw new ApiException(ApiError.TOKEN_EXPIRED , "Email code expired");
+        }
+        return userRepository.findByEmail(emailCode.getEmail())
+                .orElseThrow(()-> new ApiException(ApiError.RESOURCE_NOT_FOUND , "Can't find user by email"));
     }
 
     protected void sendEmail(String to, String subject, String text) {

@@ -24,6 +24,15 @@ public class JwtUtils {
                 .compact();
     }
 
+    public String generateTokenWithoutExpiredDate(String userEmail) {
+        return Jwts.builder()
+                .setSubject(userEmail)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + Integer.MAX_VALUE))
+                .signWith(SignatureAlgorithm.HS256, jwtSecret)
+                .compact();
+    }
+
     public String getUsernameFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(jwtSecret)

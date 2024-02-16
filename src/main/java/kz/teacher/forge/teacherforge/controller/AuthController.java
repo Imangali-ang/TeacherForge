@@ -26,8 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -52,11 +50,7 @@ public class AuthController {
         if (!passwordEncoder.matches(email.getPassword(), user.getPassword())) {
             throw new ApiException(ApiError.AUTHORIZATION_ERROR, "Password is not correct");
         }
-        try {
-           authService.sendVerificationCode(email);
-        } catch (Throwable ex){
-            throw new ApiException(ApiError.AUTHORIZATION_ERROR , "Can't send token");
-        }
+        authService.sendVerificationCode(email);
         return ResponseEntity.ok().build();
     }
 
@@ -66,7 +60,12 @@ public class AuthController {
         Authentication authentication = new UsernamePasswordAuthenticationToken(opt, null);
         authentication = authenticationManager.authenticate(authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateToken(user.getEmail());
+        String jwt;
+        if(opt.isRememberMe()) {
+            jwt = jwtUtils.generateTokenWithoutExpiredDate(user.getEmail());
+        } else {
+            jwt = jwtUtils.generateToken(user.getEmail());
+        }
         Token token = new Token();
         token.setToken(jwt);
         token.setUser(user);

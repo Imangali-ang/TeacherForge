@@ -9,6 +9,7 @@ public class ReceiveOpt {
 
     private String code;
     private String email;
+    private boolean rememberMe;
     public void setEmail(String email) {
         this.email = email.toLowerCase();
     }
