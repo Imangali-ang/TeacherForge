@@ -6,12 +6,9 @@ import lombok.Data;
 import java.util.UUID;
 
 @Data
-public class SchoolDto {
-    private UUID id;
-    private String domain;
+public class SchoolRequest {
     private String name;
+    private UUID regionId;
     private School.SchoolStatus status;
     private School.SchoolType type;
-    private UUID regionId;
-    private String address;
 }

@@ -1,39 +1,35 @@
 package kz.teacher.forge.teacherforge.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import kz.teacher.forge.teacherforge.models.dto.UserDto;
 import lombok.Data;
+import lombok.NonNull;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
-@Table(name = "users")
 @Data
+@Table(name = "user")
 public class User {
     @Id
-    @GeneratedValue
     private UUID id;
     private String email;
-    @Column(name = "username")
+    @Column(value = "username")
     private String userName;
-    @Column(name = "middlename")
+    @Column(value = "middlename")
     private String middleName;
-    @Column(name = "lastname")
+    @Column(value = "lastname")
     private String lastName;
     private Boolean blocked;
     private LocalDateTime created;
     private LocalDateTime lastConnection;
-    @Enumerated(EnumType.STRING)
     private UserRole userRole;
-    @Column(nullable = false)
+
+    @NonNull
     private String password;
-    @Column(name = "schoolid")
+    @Column(value = "schoolid")
     private UUID schoolId;
     private String position;
     private String category;

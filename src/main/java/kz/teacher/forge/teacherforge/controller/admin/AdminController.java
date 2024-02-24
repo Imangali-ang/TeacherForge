@@ -1,12 +1,15 @@
-package kz.teacher.forge.teacherforge.controller;
+package kz.teacher.forge.teacherforge.controller.admin;
 
+import kz.teacher.forge.teacherforge.models.Region;
 import kz.teacher.forge.teacherforge.models.School;
+import kz.teacher.forge.teacherforge.models.dto.SchoolRequest;
 import kz.teacher.forge.teacherforge.models.dto.StudentDto;
 import kz.teacher.forge.teacherforge.mongo.models.Student;
 import kz.teacher.forge.teacherforge.models.User;
 import kz.teacher.forge.teacherforge.models.dto.SchoolDto;
 import kz.teacher.forge.teacherforge.models.dto.UserDto;
 import kz.teacher.forge.teacherforge.mongo.repository.StudentRepository;
+import kz.teacher.forge.teacherforge.repository.RegionRepository;
 import kz.teacher.forge.teacherforge.repository.SchoolRepository;
 import kz.teacher.forge.teacherforge.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -27,10 +30,12 @@ public class AdminController {
     private final String USER = "users";
     private final String SCHOOL = "schools";
     private final String STUDENT = "students";
+    private final String REGION = "regions";
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final SchoolRepository schoolRepository;
+
     private final StudentRepository studentRepository;
+    private final RegionRepository regionRepository;
 
     @PostMapping(USER)
     public User createUser(@RequestBody UserDto userDto) {
@@ -39,10 +44,11 @@ public class AdminController {
         return userRepository.save(user);
     }
 
-    @PostMapping(SCHOOL)
-    public School createSchool(@RequestBody SchoolDto schoolDto) {
-        School school = new School(schoolDto);
-        return schoolRepository.save(school);
+
+
+    @GetMapping(REGION)
+    public List<Region> getRegions(){
+        return regionRepository.findAll();
     }
 
     @PostMapping(STUDENT)
@@ -54,14 +60,8 @@ public class AdminController {
         return studentRepository.save(student);
     }
 
-
     @GetMapping(STUDENT)
     public List<Student> getStudentsListByParametrs(@RequestParam("field") String field) {
         return studentRepository.findByHealthInAdditionalFields(field);
     }
-
-//    @GetMapping(STUDENT)
-//    public List<Student> getStudentsListByParametrs(@RequestParam("field") String field) {
-//        return studentRepository.findByName(field);
-//    }
 }

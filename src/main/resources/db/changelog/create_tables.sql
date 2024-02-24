@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS users
     schoolId            UUID,
     CONSTRAINT unique_email UNIQUE (email),
     CONSTRAINT unique_username UNIQUE (username)
-    );
+);
 
 CREATE INDEX idx_user_name ON users(username);
 CREATE INDEX idx_email ON users(email);

@@ -43,6 +43,7 @@ public class AuthServiceImpl implements AuthService {
         } catch (Throwable ex){
             throw new ApiException(ApiError.BAD_REQUEST , "Can't send code to email");
         }
+        emailCode.setUsed(false);
         emailCode.setCode(verificationCode);
         emailCode.setSendingTime(LocalDateTime.now());
         emailCode.setEmail(email.getEmail());
@@ -60,6 +61,8 @@ public class AuthServiceImpl implements AuthService {
         if(Duration.between(emailCode.getSendingTime(), LocalDateTime.now()).toMinutes() > 5) {
             throw new ApiException(ApiError.TOKEN_EXPIRED , "Email code expired");
         }
+        emailCode.setUsed(true);
+        emailCodeRepository.save(emailCode);
         return userRepository.findByEmail(emailCode.getEmail())
                 .orElseThrow(()-> new ApiException(ApiError.RESOURCE_NOT_FOUND , "Can't find user by email"));
     }

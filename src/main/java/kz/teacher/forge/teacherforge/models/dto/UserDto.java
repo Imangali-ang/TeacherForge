@@ -18,6 +18,7 @@ public class UserDto {
     private UUID schoolId;
     private String position;
     private String category;
+    private String number;
 
     public void setEmail(String email) {
         this.email = email.toLowerCase();

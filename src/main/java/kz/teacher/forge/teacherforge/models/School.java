@@ -1,28 +1,47 @@
 package kz.teacher.forge.teacherforge.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import kz.teacher.forge.teacherforge.models.dto.SchoolDto;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.UUID;
 
 @Data
 @Table(name="schools")
-@Entity
 public class School {
     @Id
     private UUID id;
     private String domain;
     private String name;
-    private String number;
+    private UUID regionId;
+    private String address;
+    private SchoolStatus status;
+    private SchoolType type;
 
     public School(){}
 
     public School(SchoolDto schoolDto){
         domain = schoolDto.getDomain();
         name = schoolDto.getName();
-        number = schoolDto.getName();
+        status = schoolDto.getStatus();
+        type = schoolDto.getType();
+        address = schoolDto.getAddress();
+        regionId=schoolDto.getRegionId();
+    }
+
+    public enum SchoolStatus{
+        STATE,
+        MUNICIPAL,
+        PRIVATE
+    }
+
+    public enum SchoolType{
+        GYMNASIUMS,
+        LYCEUMS,
+        INTERNATIONAL,
+        SPECIALIZED,
+        GENERAL,
+        BOARDING
     }
 }

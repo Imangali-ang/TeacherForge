@@ -21,14 +21,7 @@ public class OtpAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        ReceiveOpt otp = (ReceiveOpt) authentication.getPrincipal();
-        User user = authService.getUserFromOpt(otp);
-
-        if (user != null) {
-            return new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
-        } else {
-            throw new BadCredentialsException("Invalid OTP");
-        }
+       return authentication;
     }
 
     @Override

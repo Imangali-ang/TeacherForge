@@ -68,7 +68,7 @@ public class AuthController {
         }
         Token token = new Token();
         token.setToken(jwt);
-        token.setUser(user);
+        token.setUserId(user.getId());
         token.setTokenType(Token.TokenType.BEARER);
         tokenRepository.save(token);
         return ResponseEntity.ok(new JwtResponse(jwt,
