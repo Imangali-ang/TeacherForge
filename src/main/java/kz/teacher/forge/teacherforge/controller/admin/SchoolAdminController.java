@@ -3,6 +3,8 @@ package kz.teacher.forge.teacherforge.controller.admin;
 import kz.teacher.forge.teacherforge.models.School;
 import kz.teacher.forge.teacherforge.models.dto.SchoolDto;
 import kz.teacher.forge.teacherforge.models.dto.SchoolRequest;
+import kz.teacher.forge.teacherforge.models.exception.ApiError;
+import kz.teacher.forge.teacherforge.models.exception.ApiException;
 import kz.teacher.forge.teacherforge.repository.SchoolRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.RequestEntity;
@@ -47,8 +49,15 @@ public class SchoolAdminController {
                 request.getType());
     }
 
-    @DeleteMapping("{schoolId}")
-    public ResponseEntity<Object> getSchoolList(@RequestParam("schoolId") UUID schoolId){
+    @GetMapping("/{schoolId}")
+    public ResponseEntity<School> getSchool(@RequestParam("schoolId") UUID schoolId) {
+        School school = schoolRepository.findById(schoolId)
+                .orElseThrow(() -> new ApiException(ApiError.RESOURCE_NOT_FOUND , "not found school"));
+        return ResponseEntity.ok(school);
+    }
+
+    @DeleteMapping("/{schoolId}")
+    public ResponseEntity<Object> deleteSchool(@RequestParam("schoolId") UUID schoolId){
         schoolRepository.deleteById(schoolId);
         return ResponseEntity.ok().build();
     }

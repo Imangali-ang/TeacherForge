@@ -14,6 +14,7 @@ import kz.teacher.forge.teacherforge.repository.SchoolRepository;
 import kz.teacher.forge.teacherforge.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
@@ -29,6 +31,7 @@ import java.util.List;
 public class AdminController {
     private final String USER = "users";
     private final String SCHOOL = "schools";
+    private final String SCHOOL_USERS = SCHOOL+"/{schoolId}/users";
     private final String STUDENT = "students";
     private final String REGION = "regions";
     private final UserRepository userRepository;
@@ -43,8 +46,6 @@ public class AdminController {
         User user = new User(userDto , encodedPassword);
         return userRepository.save(user);
     }
-
-
 
     @GetMapping(REGION)
     public List<Region> getRegions(){
@@ -64,4 +65,6 @@ public class AdminController {
     public List<Student> getStudentsListByParametrs(@RequestParam("field") String field) {
         return studentRepository.findByHealthInAdditionalFields(field);
     }
+
+
 }

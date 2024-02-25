@@ -26,7 +26,7 @@ public class User {
     private LocalDateTime created;
     private LocalDateTime lastConnection;
     private UserRole userRole;
-
+    private String phoneNumber;
     @NonNull
     private String password;
     @Column(value = "schoolid")
