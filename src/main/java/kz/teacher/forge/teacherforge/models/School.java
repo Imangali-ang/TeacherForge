@@ -2,6 +2,7 @@ package kz.teacher.forge.teacherforge.models;
 
 import kz.teacher.forge.teacherforge.models.dto.SchoolDto;
 import lombok.Data;
+import lombok.NonNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -14,7 +15,9 @@ public class School {
     private UUID id;
     private String domain;
     private String name;
+    @NonNull
     private UUID regionId;
+    @NonNull
     private String address;
     private SchoolStatus status;
     private SchoolType type;

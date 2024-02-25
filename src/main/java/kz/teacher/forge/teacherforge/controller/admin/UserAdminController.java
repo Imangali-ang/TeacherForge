@@ -49,7 +49,7 @@ public class UserAdminController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping
     public List<User> getUserByFullName(@RequestParam("name") String name ,
                                         @PathVariable("schoolId") UUID schoolId,
                                         @RequestParam("role") String role) {
