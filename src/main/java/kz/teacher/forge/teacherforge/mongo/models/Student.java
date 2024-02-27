@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 
@@ -17,7 +18,11 @@ public class Student {
     private String middlename;
     private UUID photoId;
     private String phoneNumber;
+    private LocalDate birthDate;
+    private String gender;
+    private String nationality;
     private String email;
     private RoomClass roomClass;
+    private boolean orphan;
     private Map<String, Object> additionalProperties;
 }

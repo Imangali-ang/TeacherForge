@@ -60,6 +60,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v1/admin/**").hasAnyRole(ADMIN.name())
                                 .requestMatchers("/api/v1/client/**").hasAnyRole(TEACHER.name())
                                 .requestMatchers("/api/v1/psychologist/**").hasAnyRole(PSYCHOLOGIST.name())
+                                .requestMatchers("/api/v1/files/**").hasAnyRole(ADMIN.name() , TEACHER.name() , PSYCHOLOGIST.name())
                                 .anyRequest()
                                 .authenticated()
                 )
