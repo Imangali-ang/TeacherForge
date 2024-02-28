@@ -22,7 +22,8 @@ public class Student {
     private String gender;
     private String nationality;
     private String email;
-    private RoomClass roomClass;
+    private String classRoom;
     private boolean orphan;
+    private UUID schoolId;
     private Map<String, Object> additionalProperties;
 }
