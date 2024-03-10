@@ -39,7 +39,7 @@ public class AuthServiceImpl implements AuthService {
         String verificationCode = generateRandomCode();
         EmailCode emailCode = new EmailCode();
         try {
-            sendEmail(email.getEmail(), "Код подтверждения", "Ваш код подтверждения: " + verificationCode);
+//            sendEmail(email.getEmail(), "Код подтверждения", "Ваш код подтверждения: " + verificationCode);
         } catch (Throwable ex){
             throw new ApiException(ApiError.BAD_REQUEST , "Can't send code to email");
         }

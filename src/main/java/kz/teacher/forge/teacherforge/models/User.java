@@ -45,7 +45,6 @@ public class User {
     }
 
     public User(UserDto userDto , String encodedPassword) {
-        id = UUID.randomUUID();
         email = userDto.getEmail();
         userName = userDto.getUserName();
         lastName = userDto.getLastName();
