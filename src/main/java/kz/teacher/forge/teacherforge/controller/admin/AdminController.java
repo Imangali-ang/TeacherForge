@@ -12,6 +12,8 @@ import kz.teacher.forge.teacherforge.repository.RegionRepository;
 import kz.teacher.forge.teacherforge.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -84,7 +86,13 @@ public class AdminController {
     }
 
     @PutMapping (STUDENT)
-    public Student getStudent(@PathVariable("studentId") String studentId , @RequestBody Student student){
+    public Student editStudent(@PathVariable("studentId") String studentId , @RequestBody Student student){
         return studentRepository.save(student);
+    }
+
+    @DeleteMapping(STUDENT)
+    public ResponseEntity<Object> deleteStudent(@PathVariable("studentId") String studentId){
+        studentRepository.deleteById(studentId);
+        return ResponseEntity.ok().build();
     }
 }

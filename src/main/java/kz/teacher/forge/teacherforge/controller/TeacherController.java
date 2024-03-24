@@ -2,6 +2,8 @@ package kz.teacher.forge.teacherforge.controller;
 
 import kz.teacher.forge.teacherforge.models.Report;
 import kz.teacher.forge.teacherforge.models.dto.ReportDto;
+import kz.teacher.forge.teacherforge.mongo.models.Student;
+import kz.teacher.forge.teacherforge.mongo.repository.StudentRepository;
 import kz.teacher.forge.teacherforge.repository.ReportRepository;
 import kz.teacher.forge.teacherforge.repository.ReportTypeRepository;
 import kz.teacher.forge.teacherforge.service.ReportService;
@@ -12,9 +14,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -27,6 +31,7 @@ public class TeacherController {
     private final ReportRepository reportRepository;
     private final ReportService reportService;
     private final ReportTypeRepository reportTypeRepository;
+    private final StudentRepository studentRepository;
 
     @PostMapping(TEACHER_REPORTS)
     public ResponseEntity<Object>  createReport(@PathVariable("teacherId") UUID teacherId,
@@ -38,4 +43,10 @@ public class TeacherController {
     public ResponseEntity<Object> getReportsType(){
         return ResponseEntity.ok(reportTypeRepository.findAll());
     }
+
+    @GetMapping("/students")
+    public List<Student> seacrhStudent(@RequestParam("search") String text){
+        return studentRepository.findByName(text);
+    }
+
 }

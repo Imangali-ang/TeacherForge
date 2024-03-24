@@ -14,6 +14,8 @@ public interface StudentRepository extends MongoRepository<Student , String> {
     @Query("{ 'additionalProperties': { $elemMatch: { 'health': { $exists: true } } } }")
     List<Student> findByHealthInAdditionalFields(@Param("health") String field);
 
-    @Query("{ 'name': ?0 }")
-    List<Student> findByName(@Param("name") String name);
+    @Query("{$or: [{'name': {$regex: ?0, $options: 'i'}}, {'surname': {$regex: ?0, $options: 'i'}}, {'middlename': {$regex: ?0, $options: 'i'}}]}")
+    List<Student> findByName(String searchText);
+
+
 }

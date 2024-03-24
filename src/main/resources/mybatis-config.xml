@@ -6,6 +6,9 @@
         <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
     <typeAliases>
-        <package name="kz.teacher.forge.teacherforge.models"/>
+        <typeAlias alias="UUID" type="java.util.UUID" />
     </typeAliases>
+    <typeHandlers>
+        <typeHandler handler="kz.teacher.forge.teacherforge.mapper.handlers.UUIDTypeHandler"/>
+    </typeHandlers>
 </configuration>
