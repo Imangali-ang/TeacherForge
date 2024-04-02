@@ -1,14 +1,14 @@
 package kz.teacher.forge.teacherforge.controller.admin;
 
 import kz.teacher.forge.teacherforge.models.Region;
+import kz.teacher.forge.teacherforge.models.Student;
 import kz.teacher.forge.teacherforge.models.dto.StudentDto;
 import kz.teacher.forge.teacherforge.models.exception.ApiError;
 import kz.teacher.forge.teacherforge.models.exception.ApiException;
-import kz.teacher.forge.teacherforge.mongo.models.Student;
 import kz.teacher.forge.teacherforge.models.User;
 import kz.teacher.forge.teacherforge.models.dto.UserDto;
-import kz.teacher.forge.teacherforge.mongo.repository.StudentRepository;
 import kz.teacher.forge.teacherforge.repository.RegionRepository;
+import kz.teacher.forge.teacherforge.repository.StudentRepository;
 import kz.teacher.forge.teacherforge.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -75,13 +75,8 @@ public class AdminController {
         return studentRepository.save(student);
     }
 
-    @GetMapping(STUDENTS)
-    public List<Student> getStudentsListByParametrs(@RequestParam("field") String field) {
-        return studentRepository.findByHealthInAdditionalFields(field);
-    }
-
     @GetMapping(STUDENT)
-    public Student getStudent(@PathVariable("studentId") String studentId){
+    public Student getStudent(@PathVariable("studentId") UUID studentId){
         return studentRepository.findById(studentId).orElseThrow(()->new ApiException(ApiError.RESOURCE_NOT_FOUND , "not found student"));
     }
 
@@ -91,7 +86,7 @@ public class AdminController {
     }
 
     @DeleteMapping(STUDENT)
-    public ResponseEntity<Object> deleteStudent(@PathVariable("studentId") String studentId){
+    public ResponseEntity<Object> deleteStudent(@PathVariable("studentId") UUID studentId){
         studentRepository.deleteById(studentId);
         return ResponseEntity.ok().build();
     }

@@ -1,18 +1,18 @@
-package kz.teacher.forge.teacherforge.mongo.models;
+package kz.teacher.forge.teacherforge.models;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 
 @Data
-@Document(collection = "students")
+@Table(name = "students")
 public class Student {
     @Id
-    private String id;
+    private UUID id;
     private String name;
     private String surname;
     private String middlename;
@@ -25,5 +25,5 @@ public class Student {
     private String classRoom;
     private boolean orphan;
     private UUID schoolId;
-    private Map<String, Object> additionalProperties;
+    private Map<String , Object> additionalProperties;
 }

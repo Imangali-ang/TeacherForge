@@ -1,6 +1,5 @@
 package kz.teacher.forge.teacherforge.models.dto;
 
-import kz.teacher.forge.teacherforge.mongo.models.RoomClass;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 

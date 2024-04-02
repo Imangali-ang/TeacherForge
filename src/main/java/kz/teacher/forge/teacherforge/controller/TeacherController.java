@@ -1,11 +1,11 @@
 package kz.teacher.forge.teacherforge.controller;
 
 import kz.teacher.forge.teacherforge.models.Report;
+import kz.teacher.forge.teacherforge.models.Student;
 import kz.teacher.forge.teacherforge.models.dto.ReportDto;
-import kz.teacher.forge.teacherforge.mongo.models.Student;
-import kz.teacher.forge.teacherforge.mongo.repository.StudentRepository;
 import kz.teacher.forge.teacherforge.repository.ReportRepository;
 import kz.teacher.forge.teacherforge.repository.ReportTypeRepository;
+import kz.teacher.forge.teacherforge.repository.StudentRepository;
 import kz.teacher.forge.teacherforge.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
