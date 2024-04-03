@@ -19,11 +19,17 @@
                 <if test="sort.contains('_desc')">
                     DESC
                 </if>
+                <if test="sort.contains('_asc')">
+                    ASC
+                </if>
             </when>
             <when test="sort != null and sort.contains('createdTime')">
                 ORDER BY created_time
                 <if test="sort.contains('_desc')">
                     DESC
+                </if>
+                <if test="sort.contains('_asc')">
+                    ASC
                 </if>
             </when>
             <otherwise>

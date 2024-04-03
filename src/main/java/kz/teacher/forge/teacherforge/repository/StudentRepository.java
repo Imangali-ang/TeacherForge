@@ -14,4 +14,6 @@ public interface StudentRepository extends CrudRepository<Student, UUID> {
     @Query("SELECT * from students where " +
             " (name LIKE '%' || :text || '%' or surname LIKE '%' || :text || '%' or middlename LIKE '%' || :text || '%') ")
     List<Student> findByName(@Param("text") String searchText);
+
+
 }

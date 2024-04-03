@@ -3,11 +3,17 @@ package kz.teacher.forge.teacherforge.controller;
 import kz.teacher.forge.teacherforge.mapper.ReportsMapper;
 import kz.teacher.forge.teacherforge.models.CustomUserDetails;
 import kz.teacher.forge.teacherforge.models.Report;
+import kz.teacher.forge.teacherforge.models.ReportType;
 import kz.teacher.forge.teacherforge.models.ReportWorkTime;
+import kz.teacher.forge.teacherforge.models.Student;
+import kz.teacher.forge.teacherforge.models.User;
 import kz.teacher.forge.teacherforge.models.dto.ReportsFilterRequest;
 import kz.teacher.forge.teacherforge.models.exception.ApiError;
 import kz.teacher.forge.teacherforge.models.exception.ApiException;
 import kz.teacher.forge.teacherforge.repository.ReportRepository;
+import kz.teacher.forge.teacherforge.repository.ReportTypeRepository;
+import kz.teacher.forge.teacherforge.repository.StudentRepository;
+import kz.teacher.forge.teacherforge.repository.UserRepository;
 import kz.teacher.forge.teacherforge.repository.WorkTimeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +40,9 @@ public class PsychController {
     private final ReportsMapper reportsMapper;
     private final ReportRepository reportRepository;
     private final WorkTimeRepository workTimeRepository;
+    private final UserRepository userRepository;
+    private final StudentRepository studentRepository;
+    private final ReportTypeRepository reportTypeRepository;
 
     @RequestMapping("/reports")
     public List<Report> getReports(@RequestParam(name = "search", required = false) String text,
@@ -48,6 +57,19 @@ public class PsychController {
                 .sort(sort)
                 .status(status).build();
         List<Report> reports = reportsMapper.getList(request);
+        for(Report report: reports){
+            Optional<Student> student = studentRepository.findById(report.getStudentId());
+            Optional<User> teacher = userRepository.findById(report.getCreatedById());
+            Optional<User> psych;
+            if(report.getWorkedById()!=null){
+                psych = userRepository.findById(report.getWorkedById());
+                psych.ifPresent(user -> report.setWorkedFullName(user.getUserName() + " " + user.getLastName() + " " + user.getMiddleName()));
+            }
+            student.ifPresent(value -> report.setStudentFullName(value.getName() + " " + value.getSurname() + " " + value.getMiddlename()));
+            teacher.ifPresent(user -> report.setCreatedFullName(user.getUserName() + " " + user.getLastName() + " " + user.getMiddleName()));
+            Optional<ReportType> reportType = reportTypeRepository.findById(report.getReportTypeId());
+            reportType.ifPresent(type -> report.setReportTypeText(type.getName()));
+        }
         return reports;
     }
 
@@ -101,4 +123,6 @@ public class PsychController {
         if(workTime.getReportId()==null) workTime.setReportId(reportOpt.get().getId());
         return ResponseEntity.ok(workTimeRepository.save(workTime));
     }
+
+
 }
