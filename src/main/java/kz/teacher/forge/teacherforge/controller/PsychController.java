@@ -3,17 +3,21 @@ package kz.teacher.forge.teacherforge.controller;
 import kz.teacher.forge.teacherforge.mapper.ReportsMapper;
 import kz.teacher.forge.teacherforge.models.CustomUserDetails;
 import kz.teacher.forge.teacherforge.models.Report;
-import kz.teacher.forge.teacherforge.models.User;
+import kz.teacher.forge.teacherforge.models.ReportWorkTime;
 import kz.teacher.forge.teacherforge.models.dto.ReportsFilterRequest;
 import kz.teacher.forge.teacherforge.models.exception.ApiError;
 import kz.teacher.forge.teacherforge.models.exception.ApiException;
 import kz.teacher.forge.teacherforge.repository.ReportRepository;
+import kz.teacher.forge.teacherforge.repository.WorkTimeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,8 +26,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static kz.teacher.forge.teacherforge.models.Report.ReportStatus.IN_REQUEST;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/psychologist")
@@ -31,6 +33,7 @@ public class PsychController {
 
     private final ReportsMapper reportsMapper;
     private final ReportRepository reportRepository;
+    private final WorkTimeRepository workTimeRepository;
 
     @RequestMapping("/reports")
     public List<Report> getReports(@RequestParam(name = "search", required = false) String text,
@@ -68,5 +71,34 @@ public class PsychController {
         report.setWorkedById(userId);
         report.setStatus(action);
         return ResponseEntity.ok(reportRepository.save(report));
+    }
+
+    @GetMapping("/reports/{reportId}")
+    public ResponseEntity<?> getReport(@PathVariable("reportId") UUID id) {
+        Optional<Report> reportOpt = reportRepository.findById(id);
+        if (!reportOpt.isPresent()) {
+            throw new ApiException(ApiError.RESOURCE_NOT_FOUND, "not found report");
+        }
+        return ResponseEntity.ok(reportOpt.get());
+    }
+
+    @GetMapping("/reports/{reportId}/work-times")
+    public ResponseEntity<?> getWorkTimes(@PathVariable("reportId") UUID id) {
+        Optional<Report> reportOpt = reportRepository.findById(id);
+        if (!reportOpt.isPresent()) {
+            throw new ApiException(ApiError.RESOURCE_NOT_FOUND, "not found report");
+        }
+        List<ReportWorkTime> reportWorkTimeList = workTimeRepository.findAllByReportId(reportOpt.get().getId());
+        return ResponseEntity.ok(reportWorkTimeList);
+    }
+
+    @PostMapping("/reports/{reportId}/work-times")
+    public ResponseEntity<?> addWorkTime(@PathVariable("reportId") UUID id , @RequestBody ReportWorkTime workTime) {
+        Optional<Report> reportOpt = reportRepository.findById(id);
+        if (!reportOpt.isPresent()) {
+            throw new ApiException(ApiError.RESOURCE_NOT_FOUND, "not found report");
+        }
+        if(workTime.getReportId()==null) workTime.setReportId(reportOpt.get().getId());
+        return ResponseEntity.ok(workTimeRepository.save(workTime));
     }
 }
