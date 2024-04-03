@@ -39,7 +39,7 @@ public class Report {
         IN_REQUEST,
         IN_WORK,
         FINISHED,
-        CANCELLED
+        REJECTED
     }
 
 }

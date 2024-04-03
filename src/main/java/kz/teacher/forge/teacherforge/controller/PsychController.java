@@ -104,6 +104,8 @@ public class PsychController {
         return ResponseEntity.ok(reportOpt.get());
     }
 
+
+
     @GetMapping("/reports/{reportId}/work-times")
     public ResponseEntity<?> getWorkTimes(@PathVariable("reportId") UUID id) {
         Optional<Report> reportOpt = reportRepository.findById(id);
@@ -124,5 +126,9 @@ public class PsychController {
         return ResponseEntity.ok(workTimeRepository.save(workTime));
     }
 
+    @GetMapping("/students/{studentId}")
+    public Student getStudent(@PathVariable("studentId") UUID studentId){
+        return studentRepository.findById(studentId).orElseThrow(()->new ApiException(ApiError.RESOURCE_NOT_FOUND , "not found student"));
+    }
 
 }
