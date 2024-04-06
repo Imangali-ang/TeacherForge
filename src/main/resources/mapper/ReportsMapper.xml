@@ -2,9 +2,9 @@
 <mapper namespace="kz.teacher.forge.teacherforge.mapper.ReportsMapper">
 
     <select id="getList" parameterType="kz.teacher.forge.teacherforge.models.dto.ReportsFilterRequest" resultType="kz.teacher.forge.teacherforge.models.Report">
-        SELECT r.*
+        SELECT DISTINCT r.*
         FROM reports r
-        left join users u ON u.id = r.created_by_id or u.id = r.worked_by_id
+        LEFT JOIN users u ON u.id = r.created_by_id OR u.id = r.worked_by_id
         <where>
             <if test="status != null and status != ''">
                 AND status = #{status}
@@ -40,6 +40,20 @@
             OFFSET (#{page} - 1 ) * #{size}
             LIMIT #{size};
         </if>
+    </select>
+
+    <select id="getCount" resultType="Long">
+        SELECT COUNT(DISTINCT r.id)
+        FROM reports r
+        LEFT JOIN users u ON u.id = r.created_by_id OR u.id = r.worked_by_id
+        <where>
+            <if test="status != null and status != ''">
+                AND r.status = #{status}
+            </if>
+            <if test="search != null and search != ''">
+                AND u.username LIKE concat('%', #{search}, '%')
+            </if>
+        </where>
     </select>
 
 </mapper>

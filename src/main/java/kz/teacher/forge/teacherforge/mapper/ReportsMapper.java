@@ -9,4 +9,5 @@ import java.util.List;
 @Mapper
 public interface ReportsMapper {
     List<Report> getList(ReportsFilterRequest request);
+    Long getCount(ReportsFilterRequest filterRequest);
 }

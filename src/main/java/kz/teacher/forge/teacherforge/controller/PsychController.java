@@ -1,5 +1,6 @@
 package kz.teacher.forge.teacherforge.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import kz.teacher.forge.teacherforge.mapper.ReportsMapper;
 import kz.teacher.forge.teacherforge.models.CustomUserDetails;
 import kz.teacher.forge.teacherforge.models.Report;
@@ -48,11 +49,12 @@ public class PsychController {
     private final ReportTypeRepository reportTypeRepository;
 
     @RequestMapping("/reports")
-    public List<ReportDto> getReports(@RequestParam(name = "search", required = false) String text,
+    public ResponseEntity<?> getReports(@RequestParam(name = "search", required = false) String text,
                                       @RequestParam(name = "status" , required = false , defaultValue = "IN_REQUEST") String status,
                                       @RequestParam(name = "page", defaultValue = "1") int page,
                                       @RequestParam(name = "sort" , required = false) String sort,
-                                      @RequestParam(name = "pageSize", defaultValue = "30") int pageSize){
+                                      @RequestParam(name = "pageSize", defaultValue = "30") int pageSize,
+                                        HttpServletResponse response){
         ReportsFilterRequest request = ReportsFilterRequest.builder()
                 .search(text)
                 .size(pageSize)
@@ -76,7 +78,8 @@ public class PsychController {
             reportType.ifPresent(type -> reportDto.setReportTypeText(type.getName()));
             reportDtos.add(reportDto);
         }
-        return reportDtos;
+        response.addHeader("X-Total-Count", String.valueOf(reportsMapper.getCount(request)));
+        return ResponseEntity.ok(reportDtos);
     }
 
     @PutMapping("/reports/{reportId}")
