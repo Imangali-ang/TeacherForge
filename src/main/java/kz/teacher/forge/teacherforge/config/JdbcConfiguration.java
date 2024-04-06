@@ -1,6 +1,7 @@
 package kz.teacher.forge.teacherforge.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.postgresql.util.PGobject;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import org.springframework.data.jdbc.core.convert.JdbcCustomConversions;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -64,6 +66,9 @@ public class JdbcConfiguration {
     public static class StringToUUIDSetConverter implements Converter<String, Set<UUID>> {
         @Override
         public Set<UUID> convert(String source) {
+            if(StringUtils.isBlank(source) || source.equals("{}")){
+                return Collections.emptySet();
+            }
             return Arrays.stream(source.split(","))
                     .map(UUID::fromString)
                     .collect(Collectors.toSet());
