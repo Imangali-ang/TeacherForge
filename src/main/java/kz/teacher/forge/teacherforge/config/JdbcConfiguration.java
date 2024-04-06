@@ -69,7 +69,10 @@ public class JdbcConfiguration {
             if(StringUtils.isBlank(source) || source.equals("{}")){
                 return Collections.emptySet();
             }
-            return Arrays.stream(source.split(","))
+            // Удаляем фигурные скобки и разделяем строку по запятым
+            String[] uuids = source.replaceAll("[{}]", "").split(",");
+            return Arrays.stream(uuids)
+                    .map(String::trim) // Удаляем возможные пробелы вокруг UUID
                     .map(UUID::fromString)
                     .collect(Collectors.toSet());
         }
