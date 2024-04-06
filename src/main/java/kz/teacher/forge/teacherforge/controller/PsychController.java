@@ -7,6 +7,7 @@ import kz.teacher.forge.teacherforge.models.ReportType;
 import kz.teacher.forge.teacherforge.models.ReportWorkTime;
 import kz.teacher.forge.teacherforge.models.Student;
 import kz.teacher.forge.teacherforge.models.User;
+import kz.teacher.forge.teacherforge.models.dto.ReportDto;
 import kz.teacher.forge.teacherforge.models.dto.ReportsFilterRequest;
 import kz.teacher.forge.teacherforge.models.exception.ApiError;
 import kz.teacher.forge.teacherforge.models.exception.ApiException;
@@ -15,6 +16,7 @@ import kz.teacher.forge.teacherforge.repository.ReportTypeRepository;
 import kz.teacher.forge.teacherforge.repository.StudentRepository;
 import kz.teacher.forge.teacherforge.repository.UserRepository;
 import kz.teacher.forge.teacherforge.repository.WorkTimeRepository;
+import kz.teacher.forge.teacherforge.utils.UserUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,11 +48,11 @@ public class PsychController {
     private final ReportTypeRepository reportTypeRepository;
 
     @RequestMapping("/reports")
-    public List<Report> getReports(@RequestParam(name = "search", required = false) String text,
-                                   @RequestParam(name = "status" , required = false , defaultValue = "IN_REQUEST") String status,
-                                   @RequestParam(name = "page", defaultValue = "1") int page,
-                                   @RequestParam(name = "sort" , required = false) String sort,
-                                   @RequestParam(name = "pageSize", defaultValue = "30") int pageSize){
+    public List<ReportDto> getReports(@RequestParam(name = "search", required = false) String text,
+                                      @RequestParam(name = "status" , required = false , defaultValue = "IN_REQUEST") String status,
+                                      @RequestParam(name = "page", defaultValue = "1") int page,
+                                      @RequestParam(name = "sort" , required = false) String sort,
+                                      @RequestParam(name = "pageSize", defaultValue = "30") int pageSize){
         ReportsFilterRequest request = ReportsFilterRequest.builder()
                 .search(text)
                 .size(pageSize)
@@ -57,20 +60,23 @@ public class PsychController {
                 .sort(sort)
                 .status(status).build();
         List<Report> reports = reportsMapper.getList(request);
+        List<ReportDto> reportDtos = new ArrayList<>();
         for(Report report: reports){
+            ReportDto reportDto = new ReportDto(report);
             Optional<Student> student = studentRepository.findById(report.getStudentId());
             Optional<User> teacher = userRepository.findById(report.getCreatedById());
             Optional<User> psych;
             if(report.getWorkedById()!=null){
                 psych = userRepository.findById(report.getWorkedById());
-                psych.ifPresent(user -> report.setWorkedFullName(user.getUserName() + " " + user.getLastName() + " " + user.getMiddleName()));
+                psych.ifPresent(user -> reportDto.setWorkedFullName(UserUtils.getFullName(psych.get())));
             }
-            student.ifPresent(value -> report.setStudentFullName(value.getName() + " " + value.getSurname() + " " + value.getMiddlename()));
-            teacher.ifPresent(user -> report.setCreatedFullName(user.getUserName() + " " + user.getLastName() + " " + user.getMiddleName()));
+            student.ifPresent(value -> reportDto.setStudentFullName(UserUtils.getStudentsFullName(student.get())));
+            teacher.ifPresent(user -> reportDto.setCreatedFullName(UserUtils.getFullName(user)));
             Optional<ReportType> reportType = reportTypeRepository.findById(report.getReportTypeId());
-            reportType.ifPresent(type -> report.setReportTypeText(type.getName()));
+            reportType.ifPresent(type -> reportDto.setReportTypeText(type.getName()));
+            reportDtos.add(reportDto);
         }
-        return reports;
+        return reportDtos;
     }
 
     @PutMapping("/reports/{reportId}")
@@ -101,7 +107,27 @@ public class PsychController {
         if (!reportOpt.isPresent()) {
             throw new ApiException(ApiError.RESOURCE_NOT_FOUND, "not found report");
         }
-        return ResponseEntity.ok(reportOpt.get());
+        ReportDto reportDto = new ReportDto(reportOpt.get());
+        Optional<Student> student = studentRepository.findById(reportDto.getStudentId());
+        Optional<User> teacher = userRepository.findById(reportDto.getCreatedById());
+        if(teacher.isPresent()) {
+            reportDto.setCreatedFullName(UserUtils.getFullName(teacher.get()));
+            reportDto.setTeacherCategory(teacher.get().getCategory());
+            Optional.ofNullable(teacher.get().getPhoneNumber()).ifPresent(reportDto::setStudentPhoneNumber);
+        }
+        if(student.isPresent()){
+            reportDto.setStudentFullName(UserUtils.getStudentsFullName(student.get()));
+            reportDto.setStudentClass(student.get().getClassRoom());
+            Optional.ofNullable(student.get().getPhoneNumber()).ifPresent(reportDto::setStudentPhoneNumber);
+        }
+        Optional<User> psych;
+        if(reportDto.getWorkedById()!=null){
+            psych = userRepository.findById(reportDto.getWorkedById());
+            psych.ifPresent(user -> reportDto.setWorkedFullName(UserUtils.getFullName(psych.get())));
+        }
+        Optional<ReportType> reportType = reportTypeRepository.findById(reportDto.getReportTypeId());
+        reportType.ifPresent(type -> reportDto.setReportTypeText(type.getName()));
+        return ResponseEntity.ok(reportDto);
     }
 
 

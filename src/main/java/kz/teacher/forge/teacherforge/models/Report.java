@@ -16,11 +16,7 @@ public class Report {
     @Id
     private UUID id;
     private UUID studentId;
-    @Transient
-    private String studentFullName;
     private UUID reportTypeId;
-    @Transient
-    private String reportTypeText;
     private String lesson;
     private LocalDateTime violationTime;
     private Set<UUID> documentIds;
@@ -28,12 +24,8 @@ public class Report {
     private String place;
     private ReportStatus status;
     private UUID workedById;
-    @Transient
-    private String workedFullName;
     private LocalDateTime createdTime;
     private UUID createdById;
-    @Transient
-    private String createdFullName;
 
     public enum ReportStatus{
         IN_REQUEST,
