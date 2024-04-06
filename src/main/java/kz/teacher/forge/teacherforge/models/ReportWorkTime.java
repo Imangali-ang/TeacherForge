@@ -18,4 +18,5 @@ public class ReportWorkTime {
     private String description;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate workDate;
+    private UUID workedById;
 }

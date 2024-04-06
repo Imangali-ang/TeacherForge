@@ -11,6 +11,7 @@ import kz.teacher.forge.teacherforge.repository.TokenRepository;
 import kz.teacher.forge.teacherforge.repository.UserRepository;
 import kz.teacher.forge.teacherforge.service.AuthService;
 import kz.teacher.forge.teacherforge.utils.JwtUtils;
+import kz.teacher.forge.teacherforge.utils.UserUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -73,9 +74,7 @@ public class AuthController {
         tokenRepository.save(token);
         return ResponseEntity.ok(new JwtResponse(jwt,
                 user.getId(),
-                user.getUserName(),
-                user.getMiddleName(),
-                user.getLastName(),
+                UserUtils.getFullName(user),
                 Arrays.asList(user.getUserRole().name())));
     }
 
