@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -15,4 +16,6 @@ public interface ReportRepository extends CrudRepository<Report , UUID> {
     @Modifying
     @Query("update reports set status=:action where id=:id")
     public void setStatus(@Param("action") String status , @Param("id") UUID id);
+
+    List<Report> getReportsByStudentId(UUID studentId);
 }

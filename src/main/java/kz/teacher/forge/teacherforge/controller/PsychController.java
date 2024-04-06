@@ -175,4 +175,28 @@ public class PsychController {
         return studentRepository.findById(studentId).orElseThrow(()->new ApiException(ApiError.RESOURCE_NOT_FOUND , "not found student"));
     }
 
+    @GetMapping("/students/{studentId}/reports")
+    public ResponseEntity<?> getStudentsReportHistory(@PathVariable("studentId") UUID studentId){
+        Optional<Student> student = studentRepository.findById(studentId);
+        if(!student.isPresent()){
+            throw new ApiException(ApiError.RESOURCE_NOT_FOUND , "not found student");
+        }
+        List<Report> reports = reportRepository.getReportsByStudentId(studentId);
+        List<ReportDto> reportDtos = new ArrayList<>();
+        for(Report report: reports){
+            ReportDto reportDto = new ReportDto(report);
+            Optional<User> teacher = userRepository.findById(report.getCreatedById());
+            Optional<User> psych;
+            if(report.getWorkedById()!=null){
+                psych = userRepository.findById(report.getWorkedById());
+                psych.ifPresent(user -> reportDto.setWorkedFullName(UserUtils.getFullName(psych.get())));
+            }
+            student.ifPresent(value -> reportDto.setStudentFullName(UserUtils.getStudentsFullName(student.get())));
+            teacher.ifPresent(user -> reportDto.setCreatedFullName(UserUtils.getFullName(user)));
+            Optional<ReportType> reportType = reportTypeRepository.findById(report.getReportTypeId());
+            reportType.ifPresent(type -> reportDto.setReportTypeText(type.getName()));
+            reportDtos.add(reportDto);
+        }
+        return ResponseEntity.ok(reportDtos);
+    }
 }
