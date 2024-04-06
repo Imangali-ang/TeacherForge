@@ -142,6 +142,10 @@ public class PsychController {
             throw new ApiException(ApiError.RESOURCE_NOT_FOUND, "not found report");
         }
         List<ReportWorkTime> reportWorkTimeList = workTimeRepository.findAllByReportId(reportOpt.get().getId());
+        for(ReportWorkTime reportWorkTime: reportWorkTimeList){
+            Optional<User> psych = userRepository.findById(reportWorkTime.getWorkedById());
+            psych.ifPresent(user->reportWorkTime.setWorkedFullName(UserUtils.getFullName(user)));
+        }
         return ResponseEntity.ok(reportWorkTimeList);
     }
 
@@ -152,6 +156,17 @@ public class PsychController {
             throw new ApiException(ApiError.RESOURCE_NOT_FOUND, "not found report");
         }
         if(workTime.getReportId()==null) workTime.setReportId(reportOpt.get().getId());
+        UUID userId=null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) principal;
+            userId = userDetails.getId();
+            System.out.println("User ID: " + userId);
+        } else {
+            System.out.println("User ID cannot be found, principal is not an instance of UserDetails");
+            throw new ApiException(ApiError.RESOURCE_NOT_FOUND , "not found user from context");
+        }
+        workTime.setWorkedById(userId);
         return ResponseEntity.ok(workTimeRepository.save(workTime));
     }
 

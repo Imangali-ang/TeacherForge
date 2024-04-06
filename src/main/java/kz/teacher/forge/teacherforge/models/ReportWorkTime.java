@@ -2,6 +2,7 @@ package kz.teacher.forge.teacherforge.models;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -19,4 +20,6 @@ public class ReportWorkTime {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate workDate;
     private UUID workedById;
+    @Transient
+    private String workedFullName;
 }
