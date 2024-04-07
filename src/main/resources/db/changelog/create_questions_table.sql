@@ -1,6 +1,6 @@
 create table if not exists questions(
     id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    test_id             UUID is not null,
+    test_id             UUID not null,
     question_type       TEXT,
     number              integer,
     details       jsonb,
