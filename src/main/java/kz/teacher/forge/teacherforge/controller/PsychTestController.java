@@ -1,5 +1,6 @@
 package kz.teacher.forge.teacherforge.controller;
 
+import kz.teacher.forge.teacherforge.models.Question;
 import kz.teacher.forge.teacherforge.models.dto.QuestionDto;
 import kz.teacher.forge.teacherforge.models.dto.TestDto;
 import kz.teacher.forge.teacherforge.service.TestService;
@@ -37,8 +38,8 @@ public class PsychTestController {
 
     @PostMapping("/{testId}/question")
     public ResponseEntity<?> createQuestion(@PathVariable("testId") UUID testId,
-                                            @RequestBody QuestionDto questionDto){
-        return null;
+                                            @RequestBody Question questionDto){
+        return ResponseEntity.ok(testService.createQuestion(testId , questionDto));
     }
 
 }

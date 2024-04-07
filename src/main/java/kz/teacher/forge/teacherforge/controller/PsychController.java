@@ -101,7 +101,31 @@ public class PsychController {
         }
         report.setWorkedById(userId);
         report.setStatus(action);
-        return ResponseEntity.ok(reportRepository.save(report));
+        reportRepository.save(report);
+        if (!reportOpt.isPresent()) {
+            throw new ApiException(ApiError.RESOURCE_NOT_FOUND, "not found report");
+        }
+        ReportDto reportDto = new ReportDto(reportOpt.get());
+        Optional<Student> student = studentRepository.findById(reportDto.getStudentId());
+        Optional<User> teacher = userRepository.findById(reportDto.getCreatedById());
+        if(teacher.isPresent()) {
+            reportDto.setCreatedFullName(UserUtils.getFullName(teacher.get()));
+            reportDto.setTeacherCategory(teacher.get().getCategory());
+            Optional.ofNullable(teacher.get().getPhoneNumber()).ifPresent(reportDto::setStudentPhoneNumber);
+        }
+        if(student.isPresent()){
+            reportDto.setStudentFullName(UserUtils.getStudentsFullName(student.get()));
+            reportDto.setStudentClass(student.get().getClassRoom());
+            Optional.ofNullable(student.get().getPhoneNumber()).ifPresent(reportDto::setStudentPhoneNumber);
+        }
+        Optional<User> psych;
+        if(reportDto.getWorkedById()!=null){
+            psych = userRepository.findById(reportDto.getWorkedById());
+            psych.ifPresent(user -> reportDto.setWorkedFullName(UserUtils.getFullName(psych.get())));
+        }
+        Optional<ReportType> reportType = reportTypeRepository.findById(reportDto.getReportTypeId());
+        reportType.ifPresent(type -> reportDto.setReportTypeText(type.getName()));
+        return ResponseEntity.ok(reportDto);
     }
 
     @GetMapping("/reports/{reportId}")

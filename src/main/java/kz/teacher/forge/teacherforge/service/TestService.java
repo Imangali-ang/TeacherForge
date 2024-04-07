@@ -1,12 +1,15 @@
 package kz.teacher.forge.teacherforge.service;
 
 import kz.teacher.forge.teacherforge.controller.SecurityService;
+import kz.teacher.forge.teacherforge.models.Question;
 import kz.teacher.forge.teacherforge.models.Test;
 import kz.teacher.forge.teacherforge.models.User;
 import kz.teacher.forge.teacherforge.models.dto.AnsweredTeacherDto;
+import kz.teacher.forge.teacherforge.models.dto.QuestionDto;
 import kz.teacher.forge.teacherforge.models.dto.TestDto;
 import kz.teacher.forge.teacherforge.models.exception.ApiError;
 import kz.teacher.forge.teacherforge.models.exception.ApiException;
+import kz.teacher.forge.teacherforge.repository.QuestionRepository;
 import kz.teacher.forge.teacherforge.repository.TestRepository;
 import kz.teacher.forge.teacherforge.repository.UserRepository;
 import kz.teacher.forge.teacherforge.utils.UserUtils;
@@ -28,6 +31,7 @@ public class TestService {
     private final UserRepository userRepository;
     private final SecurityService securityService;
     private final EmailService emailService;
+    private final QuestionRepository questionRepository;
 
     public Test createTest(TestDto testDto) {
         User user = securityService.getCurrentUser().get();
@@ -107,5 +111,10 @@ public class TestService {
             }
         }
         return answeredTeacherDtos;
+    }
+
+    public Question createQuestion(UUID testId, Question question) {
+        question.setTestId(testId);
+        return questionRepository.save(question);
     }
 }

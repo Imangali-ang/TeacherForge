@@ -1,13 +1,16 @@
-package kz.teacher.forge.teacherforge.models.dto;
+package kz.teacher.forge.teacherforge.models;
 
-import kz.teacher.forge.teacherforge.models.QuestionType;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.Map;
 import java.util.UUID;
 
 @Data
-public class QuestionDto {
+@Table(name = "questions")
+public class Question {
+    @Id
     private UUID id;
     private UUID testId;
     private QuestionType questionType;
