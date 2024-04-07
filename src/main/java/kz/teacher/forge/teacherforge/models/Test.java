@@ -5,6 +5,8 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -17,11 +19,20 @@ public class Test {
     private String description;
     private Set<UUID> teacherIds;
     private boolean sendAll;
+    private UUID createdId;
+    private LocalDateTime createdTime;
+    private String addressed;
+    private int addressedNum;
+    private Set<UUID> answered;
+
+    public Test(){}
 
     public Test(TestDto testDto){
+        createdId=testDto.getCreatedId();
         title=testDto.getTitle();
         description=testDto.getDescription();
         sendAll= testDto.isSendAll();
         teacherIds=testDto.getTeacherIds();
+        createdTime = testDto.getCreatedTime();
     }
 }

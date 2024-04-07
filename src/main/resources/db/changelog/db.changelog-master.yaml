@@ -26,3 +26,6 @@ databaseChangeLog:
   - include:
       file: add_worked_id_column.sql
       relativeToChangelogFile: true
+  - include:
+      file: create_tests_table.sql
+      relativeToChangelogFile: true

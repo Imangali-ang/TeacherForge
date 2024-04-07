@@ -199,4 +199,11 @@ public class PsychController {
         }
         return ResponseEntity.ok(reportDtos);
     }
+
+    @GetMapping("{userId}/teachers")
+    public List<User> searchTeacher(@PathVariable("userId") UUID userId ,
+                                    @RequestParam("search") String search){
+        User psych = userRepository.findById(userId).get();
+        return userRepository.findByName(search , User.UserRole.TEACHER.name(), psych.getSchoolId());
+    }
 }

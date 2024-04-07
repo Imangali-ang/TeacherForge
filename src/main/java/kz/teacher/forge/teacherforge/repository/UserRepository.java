@@ -26,4 +26,7 @@ public interface UserRepository extends CrudRepository<User, UUID> {
     List<User> findByName(@Param("name") String name ,
                           @Param("userRole") String userRole ,
                           @Param("schoolId") UUID schoolId);
+
+    @Query("SELECT * from users where schoolid=:schoolId and user_role='TEACHER'")
+    List<User> getTeachersBySchoolId(@Param("schoolId") UUID schoolId);
 }
