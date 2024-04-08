@@ -51,9 +51,10 @@ public class FileController {
         try {
             InputStream inputStream = fileService.getFile(fileId);
             InputStreamResource resource = new InputStreamResource(inputStream);
+            File file = fileRepository.findById(fileId).get();
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_OCTET_STREAM) // или другой MIME-тип в зависимости от файла
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileId + "\"") // Настройте имя файла
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getName() + "\"") // Настройте имя файла
                     .body(resource);
 
         } catch (Exception e) {
