@@ -105,7 +105,7 @@ public class PsychController {
         if (!reportOpt.isPresent()) {
             throw new ApiException(ApiError.RESOURCE_NOT_FOUND, "not found report");
         }
-        ReportDto reportDto = new ReportDto(reportOpt.get());
+        ReportDto reportDto = new ReportDto(report);
         Optional<Student> student = studentRepository.findById(reportDto.getStudentId());
         Optional<User> teacher = userRepository.findById(reportDto.getCreatedById());
         if(teacher.isPresent()) {
