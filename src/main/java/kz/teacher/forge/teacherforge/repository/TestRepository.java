@@ -14,4 +14,7 @@ public interface TestRepository extends CrudRepository<Test , UUID> {
 
     @Query("SELECT * from tests where title like '%' || :title || '%'")
     List<Test> searchByTitleIsLike(@Param("title") String title);
+
+    @Query("SELECT * from tests where teacher_ids like '%' || :teacherId || '%' and status='IN_PROCESSING'")
+    List<Test> findTestsByTeacherId(@Param("teacherId") String teacherId);
 }

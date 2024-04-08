@@ -5,7 +5,6 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
@@ -24,6 +23,8 @@ public class Test {
     private String addressed;
     private int addressedNum;
     private Set<UUID> answered;
+    private Status status;
+    private int questionCount;
 
     public Test(){}
 
@@ -34,5 +35,11 @@ public class Test {
         sendAll= testDto.isSendAll();
         teacherIds=testDto.getTeacherIds();
         createdTime = testDto.getCreatedTime();
+    }
+
+    public enum Status{
+        DRAW,
+        IN_PROGRESS,
+        FINISHED
     }
 }

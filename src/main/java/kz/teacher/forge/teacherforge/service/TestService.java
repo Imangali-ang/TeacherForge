@@ -38,38 +38,7 @@ public class TestService {
         testDto.setCreatedId(user.getId());
         testDto.setCreatedTime(LocalDateTime.now());
         Test test = new Test(testDto);
-        int addressedNum = 0;
-        if (testDto.isSendAll()){
-            List<User> teachers = userRepository.getTeachersBySchoolId(user.getSchoolId());
-            for (User teacher: teachers) {
-                if(!testDto.getTeacherIds().contains(teacher.getId()) && StringUtils.isNotBlank(user.getEmail())) {
-                    addressedNum+=1;
-                    emailService.sendEmail(user.getEmail(), "Вам пришел тест" , "Пожалуйста, пройдите психологический тест на " + testDto.getTitle());
-                }
-            }
-            if(testDto.getTeacherIds().isEmpty()) test.setAddressed("All school teachers");
-            else test.setAddressed("All school teachers except " + testDto.getTeacherIds().size());
-        } else {
-            for(UUID teacherId: testDto.getTeacherIds()) {
-                User teacher = userRepository.findById(teacherId)
-                        .orElseThrow(()-> new ApiException(ApiError.RESOURCE_NOT_FOUND , "can't find teacher for sending test"));
-                if(StringUtils.isNotBlank(teacher.getEmail())) {
-                    addressedNum+=1;
-                    emailService.sendEmail(teacher.getEmail(), "Вам пришел тест" , "Пожалуйста, пройдите психологический тест на " + testDto.getTitle());
-                }
-            }
-            if(testDto.getTeacherIds().size()==1){
-                for(UUID teacherId: testDto.getTeacherIds()) {
-                    User teacher = userRepository.findById(teacherId)
-                            .orElseThrow(() -> new ApiException(ApiError.RESOURCE_NOT_FOUND, "can't find teacher for sending test"));
-                    test.setAddressed(UserUtils.getFullName(teacher));
-                }
-            } else {
-                test.setAddressed("Group of " + testDto.getTeacherIds().size());
-            }
-        }
-        test.setAnswered(new HashSet<>());
-        test.setAddressedNum(addressedNum);
+        test.setStatus(Test.Status.DRAW);
         return testRepository.save(test);
     }
 
@@ -118,5 +87,56 @@ public class TestService {
         return questionRepository.save(question);
     }
 
+    public List<Test> getTestsForTeacher(User teacher){
+        return testRepository.findTestsByTeacherId(teacher.getId().toString());
+    }
 
+    public Optional<Question> getQuestion(UUID testId , int questionNum){
+        return questionRepository.findByTestIdAndNumber(testId , questionNum);
+    }
+
+    public void finishCreating(UUID testId){
+        Test test = testRepository.findById(testId)
+                .orElseThrow(()->new ApiException(ApiError.RESOURCE_NOT_FOUND , "can't find test"));
+        boolean sendAll = test.isSendAll();
+        User user = securityService.getCurrentUser().get();
+        int addressedNum = 0;
+        if(sendAll) {
+            List<User> teachers = userRepository.getTeachersBySchoolId(user.getSchoolId());
+            addressedNum=teachers.size()-test.getTeacherIds().size();
+            for (User teacher: teachers) {
+                if(!test.getTeacherIds().contains(teacher.getId()) && StringUtils.isNotBlank(user.getEmail())) {
+                    emailService.sendEmail(user.getEmail(), "Вам пришел тест" , "Пожалуйста, пройдите психологический тест на " + test.getTitle());
+                }
+            }
+            if(test.getTeacherIds().isEmpty()) test.setAddressed("All school teachers");
+            else test.setAddressed("All school teachers except " + test.getTeacherIds().size());
+        } else {
+            for(UUID teacherId: test.getTeacherIds()) {
+                User teacher = userRepository.findById(teacherId)
+                        .orElseThrow(()-> new ApiException(ApiError.RESOURCE_NOT_FOUND , "can't find teacher for sending test"));
+                if(StringUtils.isNotBlank(teacher.getEmail())) {
+                    emailService.sendEmail(teacher.getEmail(), "Вам пришел тест" , "Пожалуйста, пройдите психологический тест на " + test.getTitle());
+                }
+            }
+            if(test.getTeacherIds().size()==1){
+                addressedNum=1;
+                for(UUID teacherId: test.getTeacherIds()) {
+                    User teacher = userRepository.findById(teacherId)
+                            .orElseThrow(() -> new ApiException(ApiError.RESOURCE_NOT_FOUND, "can't find teacher for sending test"));
+                    test.setAddressed(UserUtils.getFullName(teacher));
+                }
+            } else {
+                addressedNum=test.getTeacherIds().size();
+                test.setAddressed("Group of " + test.getTeacherIds().size());
+            }
+        }
+        test.setAnswered(new HashSet<>());
+        test.setAddressedNum(addressedNum);
+
+        List<Question> questionList = questionRepository.findByTestId(testId);
+        test.setQuestionCount(questionList.size());
+        test.setStatus(Test.Status.IN_PROGRESS);
+        testRepository.save(test);
+    }
 }
