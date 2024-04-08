@@ -21,4 +21,7 @@ public interface SchoolRepository extends CrudRepository<School , UUID> {
                         @Param("regionId") UUID regionId,
                         @Param("status") School.SchoolStatus status,
                         @Param("type") School.SchoolType type);
+
+    @Query("SELECT * from schools where status = :status")
+    List<School> findAllByType(@Param("status") School.SchoolStatus STATE);
 }

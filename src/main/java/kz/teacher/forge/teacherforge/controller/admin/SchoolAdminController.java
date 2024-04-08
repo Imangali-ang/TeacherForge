@@ -49,18 +49,21 @@ public class SchoolAdminController {
 
     @GetMapping
     @SneakyThrows
-    public List<School> getSchoolList(@RequestBody SchoolRequest request){
-        List<School> list =  schoolRepository.filter(request.getName() ,
-                request.getRegionId(),
-                request.getStatus() ,
-                request.getType());
-        for(School school: list){
-           Optional<Region> region =  regionRepository.findById(school.getId());
-           if(region.isPresent()) {
-               school.setAddress(region.get().getName() + ", " + school.getAddress());
-           }
+    public List<School> getSchoolList(@RequestBody(required = false) SchoolRequest request) {
+        if(request!=null) {
+            List<School> list = schoolRepository.filter(request.getName(),
+                    request.getRegionId(),
+                    request.getStatus(),
+                    request.getType());
+            for (School school : list) {
+                Optional<Region> region = regionRepository.findById(school.getId());
+                if (region.isPresent()) {
+                    school.setAddress(region.get().getName() + ", " + school.getAddress());
+                }
+            }
+            return list;
         }
-        return list;
+        return schoolRepository.findAllByType(School.SchoolStatus.STATE);
     }
 
     @GetMapping("/{schoolId}")
