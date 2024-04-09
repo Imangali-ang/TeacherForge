@@ -2,6 +2,7 @@ create table if not exists questions_responses(
     id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     test_id             UUID not null,
     question_id         UUID not null,
+    teacher_id          UUID not null,
     number              integer,
     question_type       TEXT,
     responses TEXT[],

@@ -13,6 +13,7 @@ public class QuestionResponse {
     private UUID id;
     private UUID questionId;
     private UUID testId;
+    private UUID teacherId;
     private int number;
     private QuestionType questionType;
     private String[] responses;

@@ -2,6 +2,7 @@ package kz.teacher.forge.teacherforge.service;
 
 import kz.teacher.forge.teacherforge.controller.SecurityService;
 import kz.teacher.forge.teacherforge.models.Question;
+import kz.teacher.forge.teacherforge.models.QuestionResponse;
 import kz.teacher.forge.teacherforge.models.Test;
 import kz.teacher.forge.teacherforge.models.User;
 import kz.teacher.forge.teacherforge.models.dto.AnsweredTeacherDto;
@@ -10,6 +11,7 @@ import kz.teacher.forge.teacherforge.models.dto.TestDto;
 import kz.teacher.forge.teacherforge.models.exception.ApiError;
 import kz.teacher.forge.teacherforge.models.exception.ApiException;
 import kz.teacher.forge.teacherforge.repository.QuestionRepository;
+import kz.teacher.forge.teacherforge.repository.QuestionResponseRepository;
 import kz.teacher.forge.teacherforge.repository.TestRepository;
 import kz.teacher.forge.teacherforge.repository.UserRepository;
 import kz.teacher.forge.teacherforge.utils.UserUtils;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -32,6 +35,7 @@ public class TestService {
     private final SecurityService securityService;
     private final EmailService emailService;
     private final QuestionRepository questionRepository;
+    private final QuestionResponseRepository questionResponseRepository;
 
     public Test createTest(TestDto testDto) {
         User user = securityService.getCurrentUser().get();
@@ -138,5 +142,20 @@ public class TestService {
         test.setQuestionCount(questionList.size());
         test.setStatus(Test.Status.IN_PROGRESS);
         testRepository.save(test);
+    }
+
+    public boolean finishTesting(UUID testId){
+        Test test = testRepository.findById(testId)
+                .orElseThrow(()->new ApiException(ApiError.RESOURCE_NOT_FOUND , "cant find test"));
+        User teacher = securityService.getCurrentUser().get();
+        List<QuestionResponse> questionResponses = questionResponseRepository.findAllByTeacherId(teacher.getId());
+        if(test.getQuestionCount()==questionResponses.size()){
+            Set<UUID> answers = new HashSet<>(test.getAnswered());
+            answers.add(teacher.getId());
+            test.setAnswered(answers);
+            testRepository.save(test);
+            return true;
+        }
+        return false;
     }
 }
