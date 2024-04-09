@@ -35,3 +35,9 @@ databaseChangeLog:
   - include:
       file: create_questions_responses_table.sql
       relativeToChangelogFile: true
+  - include:
+      file: create_trigger_deletingquestion.sql
+      relativeToChangelogFile: true
+  - include:
+      file: add_school_column.sql
+      relativeToChangelogFile: true

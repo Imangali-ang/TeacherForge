@@ -25,6 +25,7 @@ public class Test {
     private Set<UUID> answered;
     private Status status;
     private int questionCount;
+    private UUID schoolId;
 
     public Test(){}
 
@@ -39,7 +40,7 @@ public class Test {
 
     public enum Status{
         DRAW,
-        IN_PROGRESS,
+        IN_PROCESSING,
         FINISHED
     }
 }

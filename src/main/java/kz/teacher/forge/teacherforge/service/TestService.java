@@ -6,7 +6,6 @@ import kz.teacher.forge.teacherforge.models.QuestionResponse;
 import kz.teacher.forge.teacherforge.models.Test;
 import kz.teacher.forge.teacherforge.models.User;
 import kz.teacher.forge.teacherforge.models.dto.AnsweredTeacherDto;
-import kz.teacher.forge.teacherforge.models.dto.QuestionDto;
 import kz.teacher.forge.teacherforge.models.dto.TestDto;
 import kz.teacher.forge.teacherforge.models.exception.ApiError;
 import kz.teacher.forge.teacherforge.models.exception.ApiException;
@@ -21,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -89,11 +89,26 @@ public class TestService {
 
     public Question createQuestion(UUID testId, Question question) {
         question.setTestId(testId);
-        return questionRepository.save(question);
+        Optional<Question> questionq = questionRepository.findByTestIdAndNumber(testId , question.getNumber());
+        if(!questionq.isPresent()) {
+            return questionRepository.save(question);
+        } else {
+            throw new ApiException(ApiError.BAD_RESOURCE_ID , "вопрос с таким номером уже существует");
+        }
     }
 
     public List<Test> getTestsForTeacher(User teacher){
-        return testRepository.findTestsByTeacherId(teacher.getId().toString());
+        List<Test> tests = testRepository.findTestsByTeacherId(teacher.getId().toString());
+//        tests.addAll(testRepository);
+        if(tests.isEmpty()){
+            return Collections.emptyList();
+        }
+        for(Test test: tests) {
+            if(test.getAnswered().contains(teacher.getId()) || test.isSendAll()){
+                tests.remove(test);
+            }
+        }
+        return tests;
     }
 
     public Optional<Question> getQuestion(UUID testId , int questionNum){
@@ -138,10 +153,9 @@ public class TestService {
         }
         test.setAnswered(new HashSet<>());
         test.setAddressedNum(addressedNum);
-
         List<Question> questionList = questionRepository.findByTestId(testId);
         test.setQuestionCount(questionList.size());
-        test.setStatus(Test.Status.IN_PROGRESS);
+        test.setStatus(Test.Status.IN_PROCESSING);
         testRepository.save(test);
     }
 
@@ -154,9 +168,18 @@ public class TestService {
             Set<UUID> answers = new HashSet<>(test.getAnswered());
             answers.add(teacher.getId());
             test.setAnswered(answers);
+            if(testCompleted(test)){
+                test.setStatus(Test.Status.FINISHED);
+            }
             testRepository.save(test);
             return true;
         }
+        return false;
+    }
+
+    protected boolean testCompleted(Test test){
+        if(test.getAddressedNum()==test.getAnswered().size())
+            return true;
         return false;
     }
 }

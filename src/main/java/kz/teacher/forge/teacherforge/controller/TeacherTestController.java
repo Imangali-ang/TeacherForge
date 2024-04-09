@@ -38,8 +38,6 @@ public class TeacherTestController {
             throw new ApiException(ApiError.AUTHORIZATION_ERROR , "Can't find teacher from Context");
         }
         User teacher = teacherOpt.get();
-        List<Test> tests = testService.getTestsForTeacher(teacher);
-        if(tests.isEmpty()) return Collections.emptyList();
         return testService.getTestsForTeacher(teacher);
     }
 

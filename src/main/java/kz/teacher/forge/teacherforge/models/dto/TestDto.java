@@ -13,6 +13,7 @@ import java.util.UUID;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TestDto {
+    private UUID id;
     private String title;
     private String description;
     private Set<UUID> teacherIds;
@@ -27,6 +28,7 @@ public class TestDto {
     public TestDto(){}
 
     public TestDto(Test test) {
+        this.id=test.getId();
         title=test.getTitle();
         description=test.getDescription();
         createdTime=test.getCreatedTime();

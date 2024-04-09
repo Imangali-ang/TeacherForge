@@ -2,6 +2,7 @@ package kz.teacher.forge.teacherforge.controller;
 
 import kz.teacher.forge.teacherforge.models.Report;
 import kz.teacher.forge.teacherforge.models.Student;
+import kz.teacher.forge.teacherforge.models.User;
 import kz.teacher.forge.teacherforge.models.dto.ReportDto;
 import kz.teacher.forge.teacherforge.repository.ReportRepository;
 import kz.teacher.forge.teacherforge.repository.ReportTypeRepository;
@@ -32,6 +33,7 @@ public class TeacherController {
     private final ReportService reportService;
     private final ReportTypeRepository reportTypeRepository;
     private final StudentRepository studentRepository;
+    private final SecurityService securityService;
 
     @PostMapping(TEACHER_REPORTS)
     public ResponseEntity<Object>  createReport(@PathVariable("teacherId") UUID teacherId,
@@ -46,7 +48,8 @@ public class TeacherController {
 
     @GetMapping("/students")
     public List<Student> seacrhStudent(@RequestParam("search") String text){
-        return studentRepository.findByName(text);
+        User teacher =  securityService.getCurrentUser().get();
+        return studentRepository.findByName(text , teacher.getSchoolId());
     }
 
 }

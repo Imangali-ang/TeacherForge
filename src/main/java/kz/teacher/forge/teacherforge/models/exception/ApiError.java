@@ -12,8 +12,6 @@ public enum ApiError {
     RESOURCE_EXISTS(HttpStatus.SC_CONFLICT, "Such resource already exists"),
     FORBIDDEN(HttpStatus.SC_FORBIDDEN, "Forbidden"),
     BAD_REQUEST(HttpStatus.SC_BAD_REQUEST, "Bad Request"),
-    DEVICE_NOT_AUTHORIZED(HttpStatus.SC_FORBIDDEN, "Device is not authorized"),
-    DEVICE_TOKEN_INVALID(HttpStatus.SC_BAD_REQUEST, "Device token is invalid"),
     INVALID_GRANT(HttpStatus.SC_UNAUTHORIZED, "Bad credentials"),
     TOKEN_EXPIRED(HttpStatus.SC_UNAUTHORIZED, "Token is expired"),
     INVALID_PASSWORD(HttpStatus.SC_FORBIDDEN,"Invalid password"),
