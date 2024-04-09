@@ -127,6 +127,7 @@ public class JdbcConfiguration {
     public static class UUIDSetToStringConverter implements Converter<Set<UUID>, String> {
         @Override
         public String convert(Set<UUID> source) {
+            if(source.isEmpty()) return "";
             return source.stream()
                     .map(UUID::toString)
                     .collect(Collectors.joining(","));

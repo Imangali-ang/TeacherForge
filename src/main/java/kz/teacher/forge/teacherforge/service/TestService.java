@@ -43,6 +43,7 @@ public class TestService {
         testDto.setCreatedTime(LocalDateTime.now());
         Test test = new Test(testDto);
         test.setStatus(Test.Status.DRAW);
+        test.setAnswered(new HashSet<>());
         return testRepository.save(test);
     }
 
