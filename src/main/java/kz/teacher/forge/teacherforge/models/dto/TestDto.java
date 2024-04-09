@@ -24,6 +24,9 @@ public class TestDto {
     private LocalDateTime createdTime;
     private String status;
     private String addressed;
+    private Test.Status testStatus;
+    private int questionCount;
+    private UUID schoolId;
 
     public TestDto(){}
 
@@ -36,5 +39,8 @@ public class TestDto {
         createdId=test.getCreatedId();
         this.addressed = test.getAddressed();
         this.status = test.getAnswered().size() +"/"+ test.getAddressedNum();
+        testStatus=test.getStatus();
+        questionCount=test.getQuestionCount();
+        schoolId=test.getSchoolId();
     }
 }
