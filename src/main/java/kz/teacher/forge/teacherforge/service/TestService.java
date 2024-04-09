@@ -99,16 +99,14 @@ public class TestService {
     }
 
     public List<Test> getTestsForTeacher(User teacher){
-        List<Test> tests = testRepository.findTestsByTeacherId(teacher.getId().toString());
+        List<Test> tests = new ArrayList<>(testRepository.findTestsByTeacherId(teacher.getId().toString()));
         tests.addAll(testRepository.findTestsBySchoolAndSendAll(teacher.getSchoolId()));
         if(tests.isEmpty()){
             return Collections.emptyList();
         }
-        for(Test test: tests) {
-            if(test.getAnswered().contains(teacher.getId()) || test.isSendAll()){
-                tests.remove(test);
-            }
-        }
+
+        tests.removeIf(test -> test.getAnswered().contains(teacher.getId()) && test.isSendAll());
+
         return tests;
     }
 
