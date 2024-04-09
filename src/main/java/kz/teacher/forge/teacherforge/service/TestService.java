@@ -42,6 +42,7 @@ public class TestService {
         testDto.setCreatedId(user.getId());
         testDto.setCreatedTime(LocalDateTime.now());
         Test test = new Test(testDto);
+        test.setSchoolId(user.getSchoolId());
         test.setStatus(Test.Status.DRAW);
         test.setAnswered(new HashSet<>());
         return testRepository.save(test);
@@ -99,7 +100,7 @@ public class TestService {
 
     public List<Test> getTestsForTeacher(User teacher){
         List<Test> tests = testRepository.findTestsByTeacherId(teacher.getId().toString());
-//        tests.addAll(testRepository);
+        tests.addAll(testRepository.findTestsBySchoolAndSendAll(teacher.getSchoolId()));
         if(tests.isEmpty()){
             return Collections.emptyList();
         }

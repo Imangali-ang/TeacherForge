@@ -35,7 +35,7 @@ public class AdminController {
     private final String USER = "users";
     private final String SCHOOL = "schools";
     private final String SCHOOL_USERS = SCHOOL+"/{schoolId}/users";
-    private final String STUDENTS = SCHOOL_USERS + "students";
+    private final String STUDENTS = SCHOOL_USERS + "/students";
     private final String STUDENT = STUDENTS+"/{studentId}";
     private final String REGION = "regions";
     private final UserRepository userRepository;
