@@ -59,6 +59,12 @@ public class PsychTestController {
     public Question editQuestion(@PathVariable("testId") UUID testId ,
                                  @PathVariable("questionNum") int questionNum,
                                   @RequestBody Question question){
+        if(question.getId()==null){
+            Question question1 = questionRepository.findByTestIdAndNumber(testId , questionNum)
+                    .orElseThrow(()->new ApiException(ApiError.RESOURCE_NOT_FOUND , "Can't find test question"));
+            question.setId(question1.getId());
+            return questionRepository.save(question);
+        }
         return questionRepository.save(question);
     }
 
