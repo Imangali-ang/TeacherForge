@@ -35,7 +35,7 @@ public class AdminController {
     private final String USER = "users";
     private final String SCHOOL = "schools";
     private final String SCHOOL_USERS = SCHOOL+"/{schoolId}/users";
-    private final String STUDENTS = SCHOOL_USERS + "/students";
+    private final String STUDENTS = "students";
     private final String STUDENT = STUDENTS+"/{studentId}";
     private final String REGION = "regions";
     private final UserRepository userRepository;
@@ -80,7 +80,7 @@ public class AdminController {
         return studentRepository.findById(studentId).orElseThrow(()->new ApiException(ApiError.RESOURCE_NOT_FOUND , "not found student"));
     }
 
-    @GetMapping(STUDENTS)
+    @GetMapping("schools/{schoolId}/users/students")
     public List<Student> getStudents(@PathVariable(value = "schoolId" , required = true) UUID schoolId ,
                                      @RequestParam(value = "search" , required = false) String text){
         return studentRepository.findByName(text , schoolId);
