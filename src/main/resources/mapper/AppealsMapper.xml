@@ -1,0 +1,36 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kz.teacher.forge.teacherforge.mapper.AppealsMapper">
+
+    <select id="getList" parameterType="kz.teacher.forge.teacherforge.models.AppealsFilterRequest" resultType="kz.teacher.forge.teacherforge.models.Appeals">
+        SELECT a.*
+        FROM appeals a
+        <where>
+            <if test="search != null and search != ''">
+                AND a.topic LIKE concat('%', #{search}, '%') OR a.text like concat('%', #{search}, '%')
+            </if>
+            <if test="read != null and read != ''">
+                AND a.is_read=#{read}
+            </if>
+            and a.deleted=false
+        </where>
+        <if test="page != 0 and size != 0">
+            OFFSET (#{page} - 1 ) * #{size}
+            LIMIT #{size};
+        </if>
+    </select>
+
+    <select id="getCount" resultType="Long">
+        SELECT COUNT(*)
+        FROM appeals a
+        <where>
+            <if test="search != null and search != ''">
+                AND a.topic LIKE concat('%', #{search}, '%') OR a.text like concat('%', #{search}, '%')
+            </if>
+            <if test="read != null and read != ''">
+                AND a.is_read=#{read}
+            </if>
+            and a.deleted=false
+        </where>
+    </select>
+
+</mapper>

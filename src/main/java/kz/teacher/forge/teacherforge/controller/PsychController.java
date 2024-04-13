@@ -2,6 +2,7 @@ package kz.teacher.forge.teacherforge.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import kz.teacher.forge.teacherforge.mapper.ReportsMapper;
+import kz.teacher.forge.teacherforge.models.Appeals;
 import kz.teacher.forge.teacherforge.models.CustomUserDetails;
 import kz.teacher.forge.teacherforge.models.Report;
 import kz.teacher.forge.teacherforge.models.ReportType;
@@ -12,6 +13,7 @@ import kz.teacher.forge.teacherforge.models.dto.ReportDto;
 import kz.teacher.forge.teacherforge.models.dto.ReportsFilterRequest;
 import kz.teacher.forge.teacherforge.models.exception.ApiError;
 import kz.teacher.forge.teacherforge.models.exception.ApiException;
+import kz.teacher.forge.teacherforge.repository.AppealsRepository;
 import kz.teacher.forge.teacherforge.repository.ReportRepository;
 import kz.teacher.forge.teacherforge.repository.ReportTypeRepository;
 import kz.teacher.forge.teacherforge.repository.StudentRepository;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +53,8 @@ public class PsychController {
     private final StudentRepository studentRepository;
     private final ReportTypeRepository reportTypeRepository;
     private final ReportService reportService;
+    private final SecurityService securityService;
+    private final AppealsRepository appealsRepository;
 
     @RequestMapping("/reports")
     public ResponseEntity<?> getReports(@RequestParam(name = "search", required = false) String text,
@@ -177,5 +182,18 @@ public class PsychController {
                                     @RequestParam("search") String search){
         User psych = userRepository.findById(userId).get();
         return userRepository.findByName(search , User.UserRole.TEACHER.name(), psych.getSchoolId());
+    }
+
+    @PostMapping("/appeals")
+    public ResponseEntity<Appeals> create(@RequestBody Appeals appeals) {
+        if(appeals.getCreatedBy()==null){
+            User user = securityService.getCurrentUser().get();
+            appeals.setCreatedBy(user.getId());
+            appeals.setSchoolId(user.getSchoolId());
+        }
+        appeals.setCreated(LocalDateTime.now());
+        appeals.setDeleted(false);
+        appeals.setRead(false);
+        return ResponseEntity.ok(appealsRepository.save(appeals));
     }
 }
