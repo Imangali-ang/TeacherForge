@@ -7,4 +7,7 @@ import java.util.UUID;
 
 public interface ReportService {
     Report create(ReportDto reportDto , UUID teacherId);
+
+    ReportDto updateReportStatus(UUID reportId, Report.ReportStatus action);
+    ReportDto buildReportDto(Report report);
 }

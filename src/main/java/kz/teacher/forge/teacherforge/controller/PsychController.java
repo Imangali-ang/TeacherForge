@@ -17,8 +17,10 @@ import kz.teacher.forge.teacherforge.repository.ReportTypeRepository;
 import kz.teacher.forge.teacherforge.repository.StudentRepository;
 import kz.teacher.forge.teacherforge.repository.UserRepository;
 import kz.teacher.forge.teacherforge.repository.WorkTimeRepository;
+import kz.teacher.forge.teacherforge.service.ReportService;
 import kz.teacher.forge.teacherforge.utils.UserUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -47,6 +49,7 @@ public class PsychController {
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
     private final ReportTypeRepository reportTypeRepository;
+    private final ReportService reportService;
 
     @RequestMapping("/reports")
     public ResponseEntity<?> getReports(@RequestParam(name = "search", required = false) String text,
@@ -83,49 +86,14 @@ public class PsychController {
     }
 
     @PutMapping("/reports/{reportId}")
-    public ResponseEntity<?> actions(@PathVariable("reportId") UUID id ,  @RequestParam("action") Report.ReportStatus action){
-        Optional<Report> reportOpt = reportRepository.findById(id);
-        if(!reportOpt.isPresent()){
-            throw new ApiException(ApiError.RESOURCE_NOT_FOUND , "not found report");
+    public ResponseEntity<ReportDto> updateReportStatus(@PathVariable UUID reportId,
+                                                        @RequestParam("action") Report.ReportStatus action) {
+        try {
+            ReportDto reportDto = reportService.updateReportStatus(reportId, action);
+            return ResponseEntity.ok(reportDto);
+        } catch (ApiException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        Report report = reportOpt.get();
-        UUID userId=null;
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDetails) {
-            CustomUserDetails userDetails = (CustomUserDetails) principal;
-            userId = userDetails.getId();
-            System.out.println("User ID: " + userId);
-        } else {
-            System.out.println("User ID cannot be found, principal is not an instance of UserDetails");
-            throw new ApiException(ApiError.RESOURCE_NOT_FOUND , "not found user from context");
-        }
-        report.setWorkedById(userId);
-        report.setStatus(action);
-        reportRepository.save(report);
-        if (!reportOpt.isPresent()) {
-            throw new ApiException(ApiError.RESOURCE_NOT_FOUND, "not found report");
-        }
-        ReportDto reportDto = new ReportDto(report);
-        Optional<Student> student = studentRepository.findById(reportDto.getStudentId());
-        Optional<User> teacher = userRepository.findById(reportDto.getCreatedById());
-        if(teacher.isPresent()) {
-            reportDto.setCreatedFullName(UserUtils.getFullName(teacher.get()));
-            reportDto.setTeacherCategory(teacher.get().getCategory());
-            Optional.ofNullable(teacher.get().getPhoneNumber()).ifPresent(reportDto::setStudentPhoneNumber);
-        }
-        if(student.isPresent()){
-            reportDto.setStudentFullName(UserUtils.getStudentsFullName(student.get()));
-            reportDto.setStudentClass(student.get().getClassRoom());
-            Optional.ofNullable(student.get().getPhoneNumber()).ifPresent(reportDto::setStudentPhoneNumber);
-        }
-        Optional<User> psych;
-        if(reportDto.getWorkedById()!=null){
-            psych = userRepository.findById(reportDto.getWorkedById());
-            psych.ifPresent(user -> reportDto.setWorkedFullName(UserUtils.getFullName(psych.get())));
-        }
-        Optional<ReportType> reportType = reportTypeRepository.findById(reportDto.getReportTypeId());
-        reportType.ifPresent(type -> reportDto.setReportTypeText(type.getName()));
-        return ResponseEntity.ok(reportDto);
     }
 
     @GetMapping("/reports/{reportId}")
@@ -134,27 +102,7 @@ public class PsychController {
         if (!reportOpt.isPresent()) {
             throw new ApiException(ApiError.RESOURCE_NOT_FOUND, "not found report");
         }
-        ReportDto reportDto = new ReportDto(reportOpt.get());
-        Optional<Student> student = studentRepository.findById(reportDto.getStudentId());
-        Optional<User> teacher = userRepository.findById(reportDto.getCreatedById());
-        if(teacher.isPresent()) {
-            reportDto.setCreatedFullName(UserUtils.getFullName(teacher.get()));
-            reportDto.setTeacherCategory(teacher.get().getCategory());
-            Optional.ofNullable(teacher.get().getPhoneNumber()).ifPresent(reportDto::setStudentPhoneNumber);
-        }
-        if(student.isPresent()){
-            reportDto.setStudentFullName(UserUtils.getStudentsFullName(student.get()));
-            reportDto.setStudentClass(student.get().getClassRoom());
-            Optional.ofNullable(student.get().getPhoneNumber()).ifPresent(reportDto::setStudentPhoneNumber);
-        }
-        Optional<User> psych;
-        if(reportDto.getWorkedById()!=null){
-            psych = userRepository.findById(reportDto.getWorkedById());
-            psych.ifPresent(user -> reportDto.setWorkedFullName(UserUtils.getFullName(psych.get())));
-        }
-        Optional<ReportType> reportType = reportTypeRepository.findById(reportDto.getReportTypeId());
-        reportType.ifPresent(type -> reportDto.setReportTypeText(type.getName()));
-        return ResponseEntity.ok(reportDto);
+        return ResponseEntity.ok(reportService.buildReportDto(reportOpt.get()));
     }
 
 

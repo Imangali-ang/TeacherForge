@@ -51,6 +51,7 @@ public class ReportDto {
         this.status = report.getStatus();
         this.createdTime = report.getCreatedTime();
         this.createdById = report.getCreatedById();
+        this.workedById=report.getWorkedById();
     }
 
     public ReportDto(){
