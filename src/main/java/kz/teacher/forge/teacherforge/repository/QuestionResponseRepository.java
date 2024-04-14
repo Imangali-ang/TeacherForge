@@ -16,6 +16,6 @@ public interface QuestionResponseRepository extends CrudRepository<QuestionRespo
     @Query("SELECT * from questions_responses where question_id=:questionId")
     Optional<QuestionResponse> findByQuestId(@Param("questionId") UUID questionId);
 
-    @Query("SELECT * from questions_responses where teacher_id=:teacherId")
-    List<QuestionResponse> findAllByTeacherId(@Param("teacherId") UUID teacherId);
+    @Query("SELECT * from questions_responses where teacher_id=:teacherId and test_id=:testId")
+    List<QuestionResponse> findAllByTeacherId(@Param("teacherId") UUID teacherId , @Param("testId") UUID testId);
 }

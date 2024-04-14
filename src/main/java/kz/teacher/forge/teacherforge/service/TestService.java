@@ -162,7 +162,7 @@ public class TestService {
         Test test = testRepository.findById(testId)
                 .orElseThrow(()->new ApiException(ApiError.RESOURCE_NOT_FOUND , "cant find test"));
         User teacher = securityService.getCurrentUser().get();
-        List<QuestionResponse> questionResponses = questionResponseRepository.findAllByTeacherId(teacher.getId());
+        List<QuestionResponse> questionResponses = questionResponseRepository.findAllByTeacherId(teacher.getId() , testId);
         if(test.getQuestionCount()==questionResponses.size()){
             Set<UUID> answers = new HashSet<>(test.getAnswered());
             answers.add(teacher.getId());
