@@ -106,7 +106,7 @@ public class PsychTestController {
     public List<QuestionsResponseDto> getTeacherQuestionsResponse(@PathVariable("testId") UUID testId,
                                                                   @PathVariable("teacherId") UUID teacherId,
                                                                   @RequestParam(name = "page", defaultValue = "1") int page,
-                                                                  @RequestParam(name = "pageSize", defaultValue = "30") int pageSize,
+                                                                  @RequestParam(name = "pageSize", defaultValue = "5") int pageSize,
                                                                   HttpServletResponse response){
         QuestionResponseFilter questionResponseFilter = QuestionResponseFilter.builder()
                 .size(pageSize)

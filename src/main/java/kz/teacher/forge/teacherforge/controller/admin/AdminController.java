@@ -12,6 +12,7 @@ import kz.teacher.forge.teacherforge.repository.StudentRepository;
 import kz.teacher.forge.teacherforge.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,6 +48,9 @@ public class AdminController {
     public User createUser(@RequestBody UserDto userDto) {
         String encodedPassword = passwordEncoder.encode(userDto.getPassword());
         User user = new User(userDto , encodedPassword);
+        if(StringUtils.isNotBlank(userDto.getNumber())){
+            user.setPhoneNumber(userDto.getNumber());
+        }
         return userRepository.save(user);
     }
 
