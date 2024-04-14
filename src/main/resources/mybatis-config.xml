@@ -10,5 +10,6 @@
     </typeAliases>
     <typeHandlers>
         <typeHandler handler="kz.teacher.forge.teacherforge.mapper.handlers.UUIDTypeHandler"/>
+        <typeHandler handler="kz.teacher.forge.teacherforge.mapper.handlers.StringArrayTypeHandler"/>
     </typeHandlers>
 </configuration>
