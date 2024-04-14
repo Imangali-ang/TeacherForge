@@ -1,0 +1,24 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kz.teacher.forge.teacherforge.mapper.QuestionsResponseMapper">
+
+    <select id="getList" parameterType="kz.teacher.forge.teacherforge.models.QuestionResponseFilter" resultType="kz.teacher.forge.teacherforge.models.QuestionResponse">
+        SELECT q.*
+        FROM questions_responses q
+        <where>
+            AND q.test_id=#{testId} AND q.teacher_id=#{teacherId}
+        </where>
+        <if test="page != 0 and size != 0">
+            OFFSET (#{page} - 1 ) * #{size}
+            LIMIT #{size};
+        </if>
+    </select>
+
+    <select id="getCount" resultType="Long">
+        SELECT COUNT(*)
+        FROM questions_responses q
+        <where>
+            AND q.test_id=#{testId} AND q.teacher_id=#{teacherId}
+        </where>
+    </select>
+
+</mapper>

@@ -92,7 +92,7 @@ public class SecurityConfig {
         corsConfiguration.setAllowedOrigins(Collections.singletonList("*"));
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
-        corsConfiguration.setExposedHeaders(Arrays.asList("X-Total-Count" , "Content-Disposition"));
+        corsConfiguration.setExposedHeaders(Arrays.asList("X-Total-Count" , "Content-Disposition","User-Full-Name"));
         corsConfiguration.setAllowCredentials(false);
         corsConfiguration.setMaxAge(3600L);
         return corsConfiguration;
