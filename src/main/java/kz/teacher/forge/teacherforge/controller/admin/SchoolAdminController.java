@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -49,12 +50,15 @@ public class SchoolAdminController {
 
     @GetMapping
     @SneakyThrows
-    public List<School> getSchoolList(@RequestBody(required = false) SchoolRequest request) {
-        if(request!=null) {
-            List<School> list = schoolRepository.filter(request.getName(),
-                    request.getRegionId(),
-                    request.getStatus(),
-                    request.getType());
+    public List<School> getSchoolList(@RequestParam(value = "name" , required = false) String name ,
+                                      @RequestParam(value = "regionId" , required = false) UUID regionId,
+                                      @RequestParam(value = "status" , required = false) School.SchoolStatus status,
+                                      @RequestParam(value = "type" , required = false) School.SchoolType type) {
+        if(name!=null || regionId!=null || status!=null || type!=null) {
+            List<School> list = schoolRepository.filter(name,
+                    regionId,
+                    status,
+                    type);
             for (School school : list) {
                 Optional<Region> region = regionRepository.findById(school.getId());
                 if (region.isPresent()) {
