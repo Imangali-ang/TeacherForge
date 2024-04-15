@@ -23,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -57,13 +60,20 @@ public class FileController {
             Optional<File> dbImageData = fileRepository.findById(fileId);
             byte[] images= ImageUtils.decompressImage(dbImageData.get().getImageData());
             return ResponseEntity.status(HttpStatus.OK)
-//                    .contentType(MediaType.APPLICATION_JSON) // или другой MIME-тип в зависимости от файла
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + dbImageData.get().getName() + "\"") // Настройте имя файла
+                    .contentType(MediaType.valueOf(MediaType.APPLICATION_OCTET_STREAM_VALUE)) // или другой MIME-тип в зависимости от файла
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + encodeFilenameForContentDisposition(dbImageData.get().getName()) + "\"") // Настройте имя файла
                     .body(images);
-
         } catch (Exception e) {
             // Обработка ошибки
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    public static String encodeFilenameForContentDisposition(String filename) throws UnsupportedEncodingException {
+        // Replace spaces with "%20" and encode the rest of the characters that are non-ASCII
+        String encodedFilename = URLEncoder.encode(filename, StandardCharsets.UTF_8.toString()).replaceAll("\\+", "%20");
+
+        // Format the filename using RFC 5987 encoding
+        return String.format("attachment; filename*=UTF-8''%s", encodedFilename);
     }
 }
