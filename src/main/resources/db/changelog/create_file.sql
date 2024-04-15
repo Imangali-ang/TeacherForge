@@ -4,5 +4,6 @@ create table if not exists file(
                      purpose TEXT,
                      uploaded_by_id UUID,
                      received_by_id UUID,
-                     time TIMESTAMP
+                     time TIMESTAMP,
+                     imagedata BYTEA
 );
