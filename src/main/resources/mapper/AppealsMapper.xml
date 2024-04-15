@@ -8,7 +8,7 @@
             <if test="search != null and search != ''">
                 AND a.topic LIKE concat('%', #{search}, '%') OR a.text like concat('%', #{search}, '%')
             </if>
-            <if test="read != null and read != ''">
+            <if test="read != null">
                 AND a.is_read=#{read}
             </if>
             and a.deleted=false
@@ -26,7 +26,7 @@
             <if test="search != null and search != ''">
                 AND a.topic LIKE concat('%', #{search}, '%') OR a.text like concat('%', #{search}, '%')
             </if>
-            <if test="read != null and read != ''">
+            <if test="read != null">
                 AND a.is_read=#{read}
             </if>
             and a.deleted=false
