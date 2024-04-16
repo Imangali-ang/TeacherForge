@@ -49,8 +49,11 @@ public class FileController {
         fileDto.setReceivedById(receiverId);
         fileDto.setTime(LocalDateTime.now());
         fileDto.setPurpose(purpose);
-        fileDto.setName(file.getFile().getOriginalFilename());
         fileDto.setImageData(ImageUtils.compressImage(file.getFile().getBytes()));
+        fileDto = fileRepository.save(fileDto);
+        fileDto.setName(fileDto.getId()+"." +file.getFile().getOriginalFilename()
+                .substring(file.getFile().getOriginalFilename()
+                        .lastIndexOf(".") + 1));
         return ResponseEntity.ok(fileRepository.save(fileDto));
     }
 
@@ -61,7 +64,7 @@ public class FileController {
             byte[] images= ImageUtils.decompressImage(dbImageData.get().getImageData());
             return ResponseEntity.status(HttpStatus.OK)
                     .contentType(MediaType.valueOf(MediaType.APPLICATION_OCTET_STREAM_VALUE)) // или другой MIME-тип в зависимости от файла
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + encodeFilenameForContentDisposition(dbImageData.get().getName()) + "\"") // Настройте имя файла
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + dbImageData.get().getName() + "\"") // Настройте имя файла
                     .body(images);
         } catch (Exception e) {
             // Обработка ошибки
@@ -69,11 +72,11 @@ public class FileController {
         }
     }
 
-    public static String encodeFilenameForContentDisposition(String filename) throws UnsupportedEncodingException {
-        // Replace spaces with "%20" and encode the rest of the characters that are non-ASCII
-        String encodedFilename = URLEncoder.encode(filename, StandardCharsets.UTF_8.toString()).replaceAll("\\+", "%20");
-
-        // Format the filename using RFC 5987 encoding
-        return String.format("attachment; filename*=UTF-8''%s", encodedFilename);
-    }
+//    public static String encodeFilenameForContentDisposition(String filename) throws UnsupportedEncodingException {
+//        // Replace spaces with "%20" and encode the rest of the characters that are non-ASCII
+//        String encodedFilename = URLEncoder.encode(filename, StandardCharsets.UTF_8.toString()).replaceAll("\\+", "%20");
+//
+//        // Format the filename using RFC 5987 encoding
+//        return String.format("attachment; filename*=UTF-8''%s", encodedFilename);
+//    }
 }
