@@ -71,12 +71,4 @@ public class FileController {
             return ResponseEntity.internalServerError().build();
         }
     }
-
-//    public static String encodeFilenameForContentDisposition(String filename) throws UnsupportedEncodingException {
-//        // Replace spaces with "%20" and encode the rest of the characters that are non-ASCII
-//        String encodedFilename = URLEncoder.encode(filename, StandardCharsets.UTF_8.toString()).replaceAll("\\+", "%20");
-//
-//        // Format the filename using RFC 5987 encoding
-//        return String.format("attachment; filename*=UTF-8''%s", encodedFilename);
-//    }
 }
