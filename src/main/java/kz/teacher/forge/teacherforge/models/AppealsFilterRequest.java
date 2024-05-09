@@ -13,6 +13,6 @@ public class AppealsFilterRequest {
     private String search;
     private int size;
     private int page;
-    private Boolean read;
+    private String read;
 }
 

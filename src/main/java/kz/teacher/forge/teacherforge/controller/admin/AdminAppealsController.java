@@ -8,6 +8,8 @@ import kz.teacher.forge.teacherforge.models.dto.AppealsList;
 import kz.teacher.forge.teacherforge.repository.AppealsRepository;
 import kz.teacher.forge.teacherforge.service.AppealsService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.StringBuilders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -60,7 +62,7 @@ public class AdminAppealsController {
     @GetMapping
     public List<AppealsDto> getAppeals(@RequestParam(name = "search", required = false) String text,
                                        @RequestParam(name = "page", defaultValue = "1") int page,
-                                       @RequestParam(name = "read" , required = false) boolean read,
+                                       @RequestParam(name = "read" , required = false) String read,
                                        @RequestParam(name = "pageSize", defaultValue = "30") int pageSize,
                                        HttpServletResponse response){
         AppealsFilterRequest appealsFilterRequest = AppealsFilterRequest.builder()
