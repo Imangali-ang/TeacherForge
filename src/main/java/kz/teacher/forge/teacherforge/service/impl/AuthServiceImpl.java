@@ -36,7 +36,8 @@ public class AuthServiceImpl implements AuthService {
                 Duration.between(existCode.get().getSendingTime(), LocalDateTime.now()).toMinutes() < 1) {
             throw new ApiException(ApiError.TOKEN_EXPIRED , "Can't send another one code to email, pls wat 1 minute");
         }
-        String verificationCode = generateRandomCode();
+//        String verificationCode = generateRandomCode();
+        String verificationCode = "000000";
         EmailCode emailCode = new EmailCode();
         try {
             sendEmail(email.getEmail(), "Код подтверждения", "Ваш код подтверждения: " + verificationCode);
