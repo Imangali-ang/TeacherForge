@@ -13,7 +13,7 @@ import java.util.UUID;
 public interface SchoolRepository extends CrudRepository<School , UUID> {
 
     @Query("SELECT * FROM schools WHERE " +
-            "(:name IS NULL OR name LIKE LIKE CONCAT('%', :name, '%')) " +
+            "(:name IS NULL OR name LIKE CONCAT('%', :name, '%')) " +
             "AND (:regionId IS NULL OR region_id = :regionId) " +
             "AND (:status IS NULL OR status = :status) " +
             "AND (:type IS NULL OR type = :type)")
