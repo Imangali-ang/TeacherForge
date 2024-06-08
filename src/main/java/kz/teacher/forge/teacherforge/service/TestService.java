@@ -72,8 +72,8 @@ public class TestService {
                     answeredTeacherDto.setAnsweredFullName(UserUtils.getFullName(teacher));
                     if (test.getAnswered().contains(teacher.getId())) answeredTeacherDto.setAnswered(true);
                     else answeredTeacherDto.setAnswered(false);
-                    answeredTeacherDtos.add(answeredTeacherDto);
                     answeredTeacherDto.setTeacherId(teacher.getId());
+                    answeredTeacherDtos.add(answeredTeacherDto);
                 }
             }
         } else {
