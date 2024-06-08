@@ -31,6 +31,7 @@ public class MailConfig {
         props.put("mail.smtp.starttls.required", "true");
         props.put("mail.mime.charset", "UTF-8");
 
+
         return mailSender;
     }
 }
