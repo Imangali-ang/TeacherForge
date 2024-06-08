@@ -73,6 +73,7 @@ public class TestService {
                     if (test.getAnswered().contains(teacher.getId())) answeredTeacherDto.setAnswered(true);
                     else answeredTeacherDto.setAnswered(false);
                     answeredTeacherDtos.add(answeredTeacherDto);
+                    answeredTeacherDto.setTeacherId(teacher.getId());
                 }
             }
         } else {
