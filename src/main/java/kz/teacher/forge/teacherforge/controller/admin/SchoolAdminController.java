@@ -45,6 +45,7 @@ public class SchoolAdminController {
         Optional.ofNullable(schoolDto.getAddress()).ifPresent(s -> school.setAddress(s));
         Optional.ofNullable(schoolDto.getType()).ifPresent(s -> school.setType(s));
         Optional.ofNullable(schoolDto.getStatus()).ifPresent(s -> school.setStatus(s));
+        Optional.ofNullable(schoolDto.getName()).ifPresent(s -> school.setName(s));
         return schoolRepository.save(school);
     }
 
