@@ -59,7 +59,7 @@ public class SchoolAdminController {
             List<School> list = schoolRepository.filter(name,
                     regionId,
                     status,
-                    type);
+                    type.name());
             for (School school : list) {
                 Optional<Region> region = regionRepository.findById(school.getId());
                 if (region.isPresent()) {

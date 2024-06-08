@@ -20,7 +20,7 @@ public interface SchoolRepository extends CrudRepository<School , UUID> {
     List<School> filter(@Param("name") String name,
                         @Param("regionId") UUID regionId,
                         @Param("status") School.SchoolStatus status,
-                        @Param("type") School.SchoolType type);
+                        @Param("type") String type);
 
     @Query("SELECT * from schools where status = :status")
     List<School> findAllByType(@Param("status") School.SchoolStatus STATE);
