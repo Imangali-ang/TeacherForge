@@ -57,9 +57,10 @@ public class SchoolAdminController {
                                       @RequestParam(value = "type" , required = false) School.SchoolType type) {
         if(name!=null || regionId!=null || status!=null || type!=null) {
             String st = Optional.ofNullable(type).map(Enum::toString).orElse(null);
+            String Sstatus = Optional.ofNullable(status).map(Enum::toString).orElse(null);
             List<School> list = schoolRepository.filter(name,
                     regionId,
-                    status,
+                    Sstatus,
                     st);
             for (School school : list) {
                 Optional<Region> region = regionRepository.findById(school.getId());
