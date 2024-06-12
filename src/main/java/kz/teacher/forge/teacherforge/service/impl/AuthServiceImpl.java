@@ -1,5 +1,7 @@
 package kz.teacher.forge.teacherforge.service.impl;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import kz.teacher.forge.teacherforge.models.EmailCode;
 import kz.teacher.forge.teacherforge.models.User;
 import kz.teacher.forge.teacherforge.models.dto.Email;
@@ -12,6 +14,7 @@ import kz.teacher.forge.teacherforge.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -36,11 +39,10 @@ public class AuthServiceImpl implements AuthService {
                 Duration.between(existCode.get().getSendingTime(), LocalDateTime.now()).toMinutes() < 1) {
             throw new ApiException(ApiError.TOKEN_EXPIRED , "Can't send another one code to email, pls wat 1 minute");
         }
-//        String verificationCode = generateRandomCode();
-        String verificationCode = "000000";
+        String verificationCode = generateRandomCode();
         EmailCode emailCode = new EmailCode();
         try {
-//            sendEmail(email.getEmail(), "Код подтверждения", "Ваш код подтверждения: " + verificationCode);
+            sendEmail(email.getEmail(), "Код подтверждения", "Ваш код подтверждения: " + verificationCode);
         } catch (Throwable ex){
             throw new ApiException(ApiError.BAD_REQUEST , "Can't send code to email");
         }
@@ -68,11 +70,12 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(()-> new ApiException(ApiError.RESOURCE_NOT_FOUND , "Can't find user by email"));
     }
 
-    protected void sendEmail(String to, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(text);
+    protected void sendEmail(String to, String subject, String text) throws MessagingException {
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        helper.setTo(to);
+        helper.setSubject(subject);
+        helper.setText(text, true);
         javaMailSender.send(message);
     }
 
