@@ -85,4 +85,5 @@ public class SchoolAdminController {
         schoolRepository.deleteById(schoolId);
         return ResponseEntity.ok().build();
     }
+
 }
